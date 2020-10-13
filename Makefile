@@ -1,4 +1,4 @@
-APP = VC-Wait-Bot
+APP = vc-wait-bot
 
 build:
 	docker build --rm --tag=$(APP) .
