@@ -5,7 +5,7 @@ build:
 	docker image prune -f
 
 run:
-	docker run -itd --name $(APP) --rm $(APP)
+	docker run -itd --name $(APP) $(APP)
 
 stop:
 	docker stop $(APP)
