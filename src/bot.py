@@ -14,7 +14,7 @@ intents.voice_states = True
 intents.members = True
 bot = commands.Bot(command_prefix='^', intents=intents)
 
-engine = create_engine('sqlite:///:memory') #Change to persistent file eventually
+engine = create_engine('sqlite:///db/app.db') #Change to persistent file eventually
 Session = sessionmaker(bind=engine)
 Base.metadata.create_all(engine)
 db = Session()
