@@ -3,8 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import enum
 
-
-
 Base = declarative_base()
 
 class Guild(Base):
@@ -15,12 +13,12 @@ class Guild(Base):
     #Wait Channel
     channel = Column(Integer, default=0)
     #Users - FK
-    users = relationship("User", order_by=User.jointime, back_populates="guild")
+    
     #Grace Period
     grace = Column(Integer, default=5)
     #Allowed Queue Roles - FK
     #Denied Queue Roles - FK
-    roles = relationship("Role", back_populates="guild")
+
     #Management Role
     management_role = Column(Integer, default=0)
 
@@ -32,6 +30,12 @@ class User(Base):
     guild = relationship("Guild", back_populates="users")
     jointime = Column(Integer, default=0, nullable=False)
     leavetime = Column(Integer, default=0, nullable=False)
+Guild.users = relationship("User", order_by=User.jointime, back_populates="guild")
+
+class RoleType(enum.Enum):
+    none = 0
+    allow = 1
+    deny = 2
 
 class Role(Base):
     __tablename__ = 'roles'
@@ -40,9 +44,4 @@ class Role(Base):
     guild_id = Column(Integer, ForeignKey('guilds.id'), nullable=False)
     guild = relationship("Guild", back_populates="roles")
     role_type = Column(Enum(RoleType),nullable=False)
-
-class RoleType(enum.Enum):
-    none = 0
-    allow = 1
-    deny = 2
-
+Guild.roles = relationship("Role", back_populates="guild")
