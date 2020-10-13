@@ -10,6 +10,9 @@ run:
 stop:
 	docker stop $(APP)
 
+logs:
+	docker logs -f $(APP)
+
 clean:
 	docker image rm $(APP)
 	docker system prune
