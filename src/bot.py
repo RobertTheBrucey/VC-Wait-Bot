@@ -3,7 +3,7 @@ from discord.ext import commands
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
-from database import Guild, User, Role, Base
+from database import Guild, User, Role, Base, Twitch
 from config import getToken
 import asyncio
 import time
