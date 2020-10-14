@@ -145,6 +145,7 @@ async def print_config(ctx):
         string += bot.get_guild(guild.id).name + "\n"
         string += "Wait Channel: " + ctx.guild.get_channel(guild.channel).name + "\n"
         string += "Grace Period: " + str(guild.grace) + " minutes\n"
+        string += "Cooldown Time: " + str(guild.cooldown) + " seconds\n"
         string += "Management role: " + str(ctx.guild.get_role(guild.management_role)) + "\n"
         string += "```"
         await ctx.channel.send(string)
