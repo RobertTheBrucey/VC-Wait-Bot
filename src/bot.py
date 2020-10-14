@@ -39,6 +39,7 @@ async def queue(ctx):
             i += 1
         queue += "\n```"
         await ctx.channel.send(queue)
+        guild.cooldown = int(time.time())
     else:
         await ctx.channel.send("```yaml\nQueue is empty\n```")
     
