@@ -29,24 +29,42 @@ help="Show the queue of players in the waiting channel.", brief="Show the queue"
 async def queue(ctx):
     guild = await checkGuild(ctx.guild, db=db)
     users = guild.users
-    if len(users) > 0:
-        queue = "```yaml\nCurrent Queue:"
-        i = 1
-        for u in sorted(users, key=lambda x: x.jointime):
-            nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
-            t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
-            queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
-            i += 1
-        queue += "\n```"
-        await ctx.channel.send(queue)
-        guild.cooldown = int(time.time())
+    tl = (guild.lastcall + guild.cooldown) - int(time.time())
+    if (tl <= 0) or check_auth(ctx):
+        if len(users) > 0:
+            queue = "```yaml\nCurrent Queue:"
+            i = 1
+            for u in sorted(users, key=lambda x: x.jointime):
+                nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+                t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
+                i += 1
+            queue += "\n```"
+            await ctx.channel.send(queue)
+            if not check_auth(ctx):
+                guild.lastcall = int(time.time())
+            db.commit()
+        else:
+            await ctx.channel.send("```yaml\nQueue is empty\n```")
     else:
-        await ctx.channel.send("```yaml\nQueue is empty\n```")
+        await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
     
 
 '''@bot.command(name='position')
 async def position(ctx, arg):
     pass'''
+
+@bot.command(name='cooldown', description="Set the cooldown of the queue command",
+help="Set the cooldown of the queue command", brief="Change cooldown time")
+async def set_cooldown(ctx, arg):
+    if (check_auth(ctx)):
+        if arg.isdigit():
+            guild = await checkGuild(ctx.guild, db=db)
+            guild.cooldown = int(arg)
+            db.commit()
+            await ctx.channel.send("```yaml\nCooldown time changed to " + arg +" seconds\n```")
+        else:
+            await ctx.channel.send("```yaml\nError: Expected an integer for cooldown time\n```")
 
 @bot.command(name='grace', description="Set the grace period in the case of temporary disconnections",
 help="Set the grace period for disconnections", brief="Change DC grace period")
@@ -56,7 +74,7 @@ async def grace(ctx, arg):
             guild = await checkGuild(ctx.guild, db=db)
             guild.grace = int(arg)
             db.commit()
-            await ctx.channel.send("```yaml\nGrace period changed to " + arg +"\n```")
+            await ctx.channel.send("```yaml\nGrace period changed to " + arg +" minutes\n```")
         else:
             await ctx.channel.send("```yaml\nError: Expected an integer for grace period\n```")
 
