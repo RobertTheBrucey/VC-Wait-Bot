@@ -8,6 +8,7 @@ from config import getToken
 import asyncio
 import time
 import datetime
+from twitch import t_bot
 
 intents = discord.Intents.default()
 intents.voice_states = True
@@ -150,6 +151,15 @@ async def print_config(ctx):
         string += "```"
         await ctx.channel.send(string)
 
+async def add_twitch(ctx):
+    pass
+
+async def del_twitch(ctx):
+    pass
+
+async def show_twitch(ctx):
+    pass
+
 @bot.event #Requires Intents.voice_states to be enabled
 async def on_voice_state_update(member, before, after):
     guild = await checkGuild(member.guild, db=db)
@@ -229,6 +239,7 @@ async def check_auth(ctx):
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
+    await t_bot.start()
     await bot.change_presence(activity=discord.Activity(name="^help", type=discord.ActivityType.listening))
     await bot.wait_until_ready()
     for g in bot.guilds:

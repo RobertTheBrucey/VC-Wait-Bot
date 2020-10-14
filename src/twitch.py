@@ -15,7 +15,7 @@ Session = sessionmaker(bind=engine)
 Base.metadata.create_all(engine)
 db = Session()
 
-bot = commands.Bot(
+t_bot = commands.Bot(
     irc_token=parser["twitch"]["irc_token"],
     client_id=parser["twitch"]["client_id"],
     nick=parser["twitch"]["nick"],
@@ -23,18 +23,16 @@ bot = commands.Bot(
     initial_channels=chans
 )
 
-print(chans)
-
-@bot.event
+@t_bot.event
 async def event_ready():
-    print("Bot Ready")
+    print("Twitch connected")
 
-@bot.event
+@t_bot.event
 async def event_message(ctx):
     if not ctx.author.name.lower() == parser["twitch"]["nick"]:
-        await bot.handle_commands(ctx)
+        await t_bot.handle_commands(ctx)
 
-@bot.command(name="queue")
+@t_bot.command(name="queue")
 async def queue(ctx):
     users = db.query(Guild).filter(Guild.id==239303808012779520).one_or_none().users
     count = len(users)
@@ -43,4 +41,4 @@ async def queue(ctx):
     await ctx.send(f'There are {count} players waiting to play!')
 
 if __name__ == "__main__":
-    bot.run()
+    t_bot.run()

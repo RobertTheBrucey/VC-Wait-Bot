@@ -54,4 +54,5 @@ class TwitchChannel(Base):
     id = Column(Integer, primary_key=True)
     guild_id = Column(Integer, ForeignKey('guilds.id'))
     guild = relationship("Guild", back_populates="twitch")
+    verified = Column(Integer, default=0) #0: unverified, 1: verification message sent, 2: verified
 Guild.twitch = relationship("TwitchChannel", back_populates="guild")
