@@ -3,7 +3,7 @@ from discord.ext import commands
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
-from database import Guild, User, Role, Base, Twitch
+from database import Guild, User, Role, Base, TwitchChannel
 from config import getToken
 import asyncio
 import time
@@ -30,7 +30,7 @@ async def queue(ctx):
     guild = await checkGuild(ctx.guild, db=db)
     users = guild.users
     tl = (guild.lastcall + guild.cooldown) - int(time.time())
-    if (tl <= 0) or check_auth(ctx):
+    if (tl <= 0) or await check_auth(ctx):
         if len(users) > 0:
             queue = "```yaml\nCurrent Queue:"
             i = 1
@@ -57,7 +57,7 @@ async def position(ctx, arg):
 @bot.command(name='cooldown', description="Set the cooldown of the queue command",
 help="Set the cooldown of the queue command", brief="Change cooldown time")
 async def set_cooldown(ctx, arg):
-    if (check_auth(ctx)):
+    if (await check_auth(ctx)):
         if arg.isdigit():
             guild = await checkGuild(ctx.guild, db=db)
             guild.cooldown = int(arg)
@@ -69,7 +69,7 @@ async def set_cooldown(ctx, arg):
 @bot.command(name='grace', description="Set the grace period in the case of temporary disconnections",
 help="Set the grace period for disconnections", brief="Change DC grace period")
 async def grace(ctx, arg):
-    if (check_auth(ctx)):
+    if (await check_auth(ctx)):
         if arg.isdigit():
             guild = await checkGuild(ctx.guild, db=db)
             guild.grace = int(arg)
@@ -81,7 +81,7 @@ async def grace(ctx, arg):
 @bot.command(name='waitchannel', description="Set the channel to monitor for waiting users",
 help="Change the channel to monitor for waiting users", brief="Change wait channel")
 async def waitchannel(ctx, arg):
-    if (check_auth(ctx)):
+    if (await check_auth(ctx)):
         opts = []
         for c in ctx.guild.voice_channels:
             if arg in c.name.lower():
@@ -115,7 +115,7 @@ async def denyrole(ctx, *args):
 @bot.command(name='managerole', description="(Optional) Set a role to manage this bot",
 help="Set the role to manage this bot in additional to administrators", brief="Set bot controller role")
 async def managerole(ctx, arg):
-    if (check_auth(ctx)):
+    if (await check_auth(ctx)):
         opts = []
         for c in ctx.guild.roles:
             if arg in c.name.lower():
@@ -139,7 +139,7 @@ async def managerole(ctx, arg):
 @bot.command(name='config', description="Show the current configuration",
 help="Show the current configuration", brief="Show current config")
 async def print_config(ctx):
-    if (check_auth(ctx)):
+    if (await check_auth(ctx)):
         string = "```yaml\nServer: "
         guild = await checkGuild(ctx.guild, db=db)
         string += bot.get_guild(guild.id).name + "\n"

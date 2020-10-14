@@ -49,9 +49,9 @@ class Role(Base):
     role_type = Column(Enum(RoleType),nullable=False)
 Guild.roles = relationship("Role", back_populates="guild")
 
-#class TwitchChannel(Base):
-#    __tablename__ = 'twitch'
-#    id = Column(Integer, primary_key=True)
-#    guild_id = Column(Integer, ForeignKey('guild.id'))
-#    guild = relationship("Guild", back_populates="twitch")
-#Guild.twitch = relationship("TwitchChannel", back_populates="guild")
+class TwitchChannel(Base):
+    __tablename__ = 'twitch'
+    id = Column(Integer, primary_key=True)
+    guild_id = Column(Integer, ForeignKey('guild.id'))
+    guild = relationship("Guild", back_populates="twitch")
+Guild.twitch = relationship("TwitchChannel", back_populates="guild")

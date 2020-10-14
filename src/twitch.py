@@ -2,7 +2,7 @@ from twitchio.ext import commands
 from configparser import ConfigParser
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database import Guild, User, Role, Base, Twitch
+from database import Guild, User, Role, Base, TwitchChannel
 import time
 import datetime
 
