@@ -181,7 +181,7 @@ async def add_twitch(ctx):
 help=f"Remove a connected Twitch channel", brief="Remove a Twitch channel")
 async def del_twitch(ctx):
     if await check_auth(ctx):
-        guild = await checkGuild(ctx.guild, db=db).one_or_none()
+        guild = await checkGuild(ctx.guild, db=db)
         name = ctx.message.content.split(" ")[1]
         if not name[0] == "#":
             name = "#" + name
