@@ -210,7 +210,7 @@ async def show_twitch(ctx):
                 if not c.verified:
                     verimsg = True
             if verimsg:
-                string += f"A mod must use {t_bot.prefix}queueverified in twitch chat to verify channels\n"
+                string += f"A mod must use {t_bot.prefix}verifyqueue in twitch chat to verify channels\n"
             string += "```"
             await ctx.channel.send(string)
         else:
