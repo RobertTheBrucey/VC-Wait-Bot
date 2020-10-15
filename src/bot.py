@@ -157,7 +157,7 @@ help=f"Connect a Twitch channel for {t_bot.prefix}queue", brief="Connect a Twitc
 async def add_twitch(ctx):
     if await check_auth(ctx):
         guild = await checkGuild(ctx.guild, db=db)
-        name = ctx.message.split(" ")[1]
+        name = ctx.message.content.split(" ")[1]
         if not name[0] == "#":
             name = "#" + name
         chan = db.query(TwitchChannel).filter(TwitchChannel.name==name).one_or_none()
@@ -181,7 +181,7 @@ help=f"Remove a connected Twitch channel", brief="Remove a Twitch channel")
 async def del_twitch(ctx):
     if await check_auth(ctx):
         guild = await checkGuild(ctx.guild, db=db).one_or_none()
-        name = ctx.message.split(" ")[1]
+        name = ctx.message.content.split(" ")[1]
         if not name[0] == "#":
             name = "#" + name
         chan = db.query(TwitchChannel).filter(TwitchChannel.name==name)
