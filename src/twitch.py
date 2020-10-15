@@ -54,7 +54,6 @@ class T_Bot(commands.Bot):
             await self.join_channels([chan.name])
         except:
             success = False
-        print(success)
         return success
 
     async def del_channel(self, chan):
