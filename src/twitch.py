@@ -61,7 +61,7 @@ class T_Bot(commands.Bot):
     
     @commands.command(name="verifyqueue")
     async def verify(self, ctx):
-        print(ctx)
+        print(ctx.channel.name)
         chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==ctx.channel.name).one_or_none()
         if ctx.author.is_mod or ctx.author.name == chan.name:
             print("Is mod")
