@@ -65,6 +65,7 @@ class T_Bot(commands.Bot):
         chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==ctx.channel.name).one_or_none()
         if ctx.author.is_mod or ctx.author.name == chan.name:
             print("Is mod")
+            print(chan.name)
             if not chan is None:
                 print("Verified")
                 chan.verified = True
