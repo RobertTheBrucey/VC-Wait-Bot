@@ -307,7 +307,7 @@ async def get_user(user_id, db=db): #Add use if not in db
 
 async def check_auth(ctx):
     allowed = False
-    owner = await bot.application_info().owner
+    owner = None#await bot.application_info().owner
     if ctx.message.author == owner:
         allowed = True
     elif ctx.message.author.guild_permissions.administrator:
