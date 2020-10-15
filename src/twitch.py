@@ -79,7 +79,6 @@ class T_Bot(commands.bot):
                 self.db.delete(chan)
                 self.db.commit()
 
-
 if __name__ == "__main__":
     t_bot = T_Bot()
     t_bot.run()

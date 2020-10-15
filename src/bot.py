@@ -162,15 +162,15 @@ async def add_twitch(ctx):
         if chan is None: #Best case, Twitch channel not linked
             chan = TwitchChannel(name=name, guild=guild)
             if await t_bot.add_channel(chan):
-                await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse !verifyqueue in Twitch chat to complete the connection\n```")
+                await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse {t_bot.prefix}verifyqueue in Twitch chat to complete the connection\n```")
             else:
                 await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
         elif chan.verified: #Someone has already linked this Twitch channel
-            await ctx.send(f"```yaml\nTwitch channel {name} has already been linked, use !leavequeue in Twitch chat to remove existing connection\n```")
+            await ctx.send(f"```yaml\nTwitch channel {name} has already been linked, use {t_bot.prefix}leavequeue in Twitch chat to remove existing connection\n```")
         else: #Twitch linked but not verified, reset the linking process
             chan.guild=guild
             if await t_bot.add_channel(chan):
-                await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse !verifyqueue in Twitch chat to complete the connection\n```")
+                await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse {t_bot.prefix}verifyqueue in Twitch chat to complete the connection\n```")
             else:
                 await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
         db.commit()
@@ -204,7 +204,7 @@ async def show_twitch(ctx):
                 if not c.verified:
                     verimsg = True
             if verimsg:
-                string += "A mod must use !queueverified in twitch chat to verify channels\n"
+                string += f"A mod must use {t_bot.prefix}queueverified in twitch chat to verify channels\n"
             string += "```"
             await ctx.channel.send(string)
         else:
