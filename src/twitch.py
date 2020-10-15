@@ -61,13 +61,9 @@ class T_Bot(commands.Bot):
     
     @commands.command(name="verifyqueue")
     async def verify(self, ctx):
-        print(ctx.channel.name)
         chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==ctx.channel.name).one_or_none()
-        if ctx.author.is_mod or ctx.author.name == chan.name:
-            print("Is mod")
-            print(chan)
+        if ctx.author.is_mod:# or ctx.author.name == chan.name:
             if not chan is None:
-                print("Verified")
                 chan.verified = True
                 self.db.commit()
 
@@ -77,7 +73,7 @@ class T_Bot(commands.Bot):
             chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==ctx.channel.name).one_or_none()
             if not chan is None:
                 await ctx.send("Goodbye!")
-                await self.part_channels([chan.name])
+                await self.part_channels(["#" + chan.name])
                 self.db.delete(chan)
                 self.db.commit()
 
