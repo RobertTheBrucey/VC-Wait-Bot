@@ -55,7 +55,7 @@ Guild.roles = relationship("Role", back_populates="guild")
 class TwitchChannel(Base):
     __tablename__ = 'twitch'
     id = Column(Integer, primary_key=True)
-    name = Column(String, length=64)
+    name = Column(String(64))
     guild_id = Column(Integer, ForeignKey('guilds.id'))
     guild = relationship("Guild", back_populates="twitch")
     verified = Column(Boolean, default=False) #0: unverified, 1: verified
