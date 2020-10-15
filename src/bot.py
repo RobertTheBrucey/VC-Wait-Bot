@@ -153,13 +153,62 @@ async def print_config(ctx):
         await ctx.channel.send(string)
 
 async def add_twitch(ctx):
-    pass
+    if await check_auth(ctx):
+        guild = await checkGuild(ctx.guild, db=db)
+        name = ctx.message.split(" ")[1]
+        if not name[0] == "#":
+            name = "#" + name
+        chan = db.query(TwitchChannel).filter(TwitchChannel.name==name).one_or_none()
+        if chan is None: #Best case, Twitch channel not linked
+            chan = TwitchChannel(name=name, guild=guild)
+            if await t_bot.add_channel(chan):
+                await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse !verifyqueue in Twitch chat to complete the connection\n```")
+            else:
+                await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
+        elif chan.verified: #Someone has already linked this Twitch channel
+            await ctx.send(f"```yaml\nTwitch channel {name} has already been linked, use !leavequeue in Twitch chat to remove existing connection\n```")
+        else: #Twitch linked but not verified, reset the linking process
+            chan.guild=guild
+            if await t_bot.add_channel(chan):
+                await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse !verifyqueue in Twitch chat to complete the connection\n```")
+            else:
+                await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
+        db.commit()
 
 async def del_twitch(ctx):
-    pass
+    if await check_auth(ctx):
+        guild = await checkGuild(ctx.guild, db=db).one_or_none()
+        name = ctx.message.split(" ")[1]
+        if not name[0] == "#":
+            name = "#" + name
+        chan = db.query(TwitchChannel).filter(TwitchChannel.name==name)
+        if chan is None:
+            await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
+        else:
+            if chan.guild == guild:
+                t_bot.del_channel(chan)
+                db.delete(chan)
+                await ctx.channel.send(f"```yaml\nTwitch channel {name} has been removed\n```")
+            else:
+                await ctx.channel.send(f"```yaml\nTwitch channel {name} is not linked to this server. Naughty!\n```")
+        db.commit()
 
 async def show_twitch(ctx):
-    pass
+    if await check_auth(ctx):
+        guild = await checkGuild(ctx.guild, db=db)
+        string = "```yaml\nLinked twitch channels:\n"
+        verimsg = False
+        if len(guild.twitch) > 0:
+            for c in guild.twitch:
+                string += c.name + " - " + "Verified\n" if c.verified else "Unverified\n"
+                if not c.verified:
+                    verimsg = True
+            if verimsg:
+                string += "A mod must use !queueverified in twitch chat to verify channels\n"
+            string += "```"
+            await ctx.channel.send(string)
+        else:
+            await ctx.channel.send("```yaml\nNo twitch channels have been linked.\n```")
 
 @bot.event #Requires Intents.voice_states to be enabled
 async def on_voice_state_update(member, before, after):

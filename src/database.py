@@ -58,5 +58,4 @@ class TwitchChannel(Base):
     verified = Column(Boolean, default=False) #0: unverified, 1: verified
     cooldown = Column(Integer, default=2)
     lastcall = Column(Integer, default=0)
-    lastchan = Column(Integer, default=0)
 Guild.twitch = relationship("TwitchChannel", back_populates="guild")
