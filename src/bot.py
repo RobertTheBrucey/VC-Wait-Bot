@@ -20,7 +20,7 @@ Session = sessionmaker(bind=engine)
 Base.metadata.create_all(engine)
 db = Session()
 
-t_bot = T_Bot(db=Session())
+t_bot = T_Bot(db)
 
 #* Print position in queue when asked
 #* On restart add all users to queue if they weren't there
