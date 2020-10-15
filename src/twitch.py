@@ -39,14 +39,6 @@ class T_Bot(commands.Bot):
 
     @commands.command(name="queue")
     async def queue(self, ctx):
-        users = self.db.query(Guild).filter(Guild.id==239303808012779520).one_or_none().users
-        count = len(users)
-        #longest = sorted(users, key=lambda x: x.jointime)[0]
-        #t = datetime.timedelta(seconds=(int(time.time()) - longest.jointime))
-        await ctx.send(f'There are {count} players waiting to play!')
-
-    @commands.command(name="queue2")
-    async def queue2(self, ctx):
         chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==ctx.channel.name).one_or_none()
         tl = (chan.lastcall + 2) - int(time.time())
         if tl < 0:
@@ -61,6 +53,7 @@ class T_Bot(commands.Bot):
             await self.join_channels([chan.name])
         except:
             success = False
+        print(success)
         return success
 
     async def del_channel(self, chan):
