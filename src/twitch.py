@@ -11,6 +11,7 @@ parser.read( "config.ini" )
 chans = parser["twitch"]["initial_channels"].split(",")
 
 class T_Bot(commands.Bot):
+    prefix = parser["twitch"]["prefix"]
     def __init__(self, db=None):
         if db is None:
             engine = create_engine('sqlite:///db/app.db')
