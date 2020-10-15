@@ -40,12 +40,13 @@ class T_Bot(commands.Bot):
     @commands.command(name="queue")
     async def queue(self, ctx):
         chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==ctx.channel.name).one_or_none()
-        tl = (chan.lastcall + 2) - int(time.time())
-        if tl < 0:
-            users = chan.guild.users
-            count = len(users)
-            await ctx.send(f'There are {count} players waiting to play!')
-            chan.lastcall = int(time.time())
+        if chan.verified:
+            tl = (chan.lastcall + 2) - int(time.time())
+            if tl < 0:
+                users = chan.guild.users
+                count = len(users)
+                await ctx.send(f'There are {count} players waiting to play!')
+                chan.lastcall = int(time.time())
     
     async def add_channel(self, chan):
         success = True
@@ -66,6 +67,7 @@ class T_Bot(commands.Bot):
             if not chan is None:
                 chan.verified = True
                 self.db.commit()
+                await ctx.send("Queue Bot Verified!")
 
     @commands.command(name="leavequeue")
     async def leavequeue(self, ctx):
