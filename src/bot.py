@@ -240,8 +240,10 @@ async def update_last(guild_d, db=db):
             break
     if msg is None:
         return
-
-    tl = (msg.edited_at.timestamp() + guild.cooldown + 1) - int(time.time())
+    try:
+        tl = (msg.edited_at.timestamp() + guild.cooldown + 1) - int(time.time())
+    except AttributeError:
+        tl = 0
     if tl <= 0:
         if len(users) > 0:
             queue = "```yaml\nCurrent Queue:"
