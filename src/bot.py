@@ -232,12 +232,15 @@ async def update_last(guild_d, db=db):
     users = guild.users
     msg = None
     for c in guild_d.text_channels:
-        msg = await c.fetch_message(guild.lastedit)
+        try:
+            msg = await c.fetch_message(guild.lastedit)
+        except:
+            pass
         if not msg is None:
             break
     if msg is None:
         return
-        
+
     tl = (msg.edited_at.timestamp() + guild.cooldown + 1) - int(time.time())
     if tl <= 0:
         if len(users) > 0:
