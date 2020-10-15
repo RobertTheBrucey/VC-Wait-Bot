@@ -230,7 +230,7 @@ async def on_voice_state_update(member, before, after):
 async def update_last(guild_d, db=db):
     guild = await checkGuild(guild_d, db=db)
     users = guild.users
-    me = await guild_d.get_member(bot.user.id)
+    me = guild_d.get_member(bot.user.id)
     msg = await me.fetch_message(guild.lastedit)
     tl = (msg.edited_at.timestamp() + guild.cooldown + 1) - int(time.time())
     if tl <= 0:
