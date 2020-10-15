@@ -13,12 +13,13 @@ chans = parser["twitch"]["initial_channels"].split(",")
 class T_Bot(commands.Bot):
     prefix = parser["twitch"]["prefix"]
     def __init__(self, db=None):
-        if db is None:
+        self.db = db
+        if self.db is None:
             engine = create_engine('sqlite:///db/app.db')
             Session = sessionmaker(bind=engine)
             Base.metadata.create_all(engine)
-            db = Session()
-        chans = [c.name for c in db.query(TwitchChannel).all()]
+            self.db = Session()
+        chans = [c.name for c in self.db.query(TwitchChannel).all()]
         chans += parser["twitch"]["initial_channels"].split(",")
         super().__init__(
             irc_token=parser["twitch"]["irc_token"],
