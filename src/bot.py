@@ -8,7 +8,7 @@ from config import getToken
 import asyncio
 import time
 import datetime
-from twitch import t_bot
+from twitch import T_Bot
 
 intents = discord.Intents.default()
 intents.voice_states = True
@@ -19,6 +19,8 @@ engine = create_engine('sqlite:///db/app.db') #Change to persistent file eventua
 Session = sessionmaker(bind=engine)
 Base.metadata.create_all(engine)
 db = Session()
+
+t_bot = T_Bot(db=Session())
 
 #* Print position in queue when asked
 #* On restart add all users to queue if they weren't there
@@ -41,15 +43,14 @@ async def queue(ctx):
                 queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
                 i += 1
             queue += "\n```"
-            await ctx.channel.send(queue)
+            guild.lastedit = (await ctx.channel.send(queue)).id
             if not check_auth(ctx):
                 guild.lastcall = int(time.time())
             db.commit()
         else:
-            await ctx.channel.send("```yaml\nQueue is empty\n```")
+            guild.lastedit = (await ctx.channel.send("```yaml\nQueue is empty\n```")).id
     else:
         await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
-    
 
 '''@bot.command(name='position')
 async def position(ctx, arg):
@@ -171,10 +172,31 @@ async def on_voice_state_update(member, before, after):
         user.guild = guild
         user.guild.users.remove(user)
     elif before.channel != chan and after.channel == chan:
-        if ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
+        if user.guild == guild and ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
             user.jointime = int(time.time())
         user.guild = guild
     db.commit()
+    await update_last(member.guild, db=db)
+
+async def update_last(guild_d, db=db):
+    guild = await checkGuild(guild_d, db=db)
+    users = guild.users
+    msg = await bot.user.fetch_message(guild.lastedit)
+    tl = (msg.edited_at + guild.cooldown + 1) - int(time.time())
+    if tl <= 0:
+        if len(users) > 0:
+            queue = "```yaml\nCurrent Queue:"
+            i = 1
+            for u in sorted(users, key=lambda x: x.jointime):
+                nick = msg.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+                t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
+                i += 1
+            queue += "\n```"
+            guild.lastedit = (await msg.channel.edit(content=queue)).id
+            db.commit()
+        else:
+            guild.lastedit = (await msg.channel.edit(content="```yaml\nQueue is empty\n```")).id
 
 async def checkGuild(in_guild, db=db):
     guild = db.query(Guild).filter(Guild.id==in_guild.id).one_or_none()

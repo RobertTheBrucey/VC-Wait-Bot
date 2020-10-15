@@ -16,3 +16,7 @@ Plan:
 * Longer term options
     * Play room
     * Time played
+
+Need to handle the case of being added to a server while people are in the VC or when config changes
+
+Add twitch integration

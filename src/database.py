@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, Boolean, Enum, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, Boolean, Enum, ForeignKey, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import enum
@@ -52,7 +52,11 @@ Guild.roles = relationship("Role", back_populates="guild")
 class TwitchChannel(Base):
     __tablename__ = 'twitch'
     id = Column(Integer, primary_key=True)
+    name = Column(String, length=64)
     guild_id = Column(Integer, ForeignKey('guilds.id'))
     guild = relationship("Guild", back_populates="twitch")
-    verified = Column(Integer, default=0) #0: unverified, 1: verification message sent, 2: verified
+    verified = Column(Boolean, default=False) #0: unverified, 1: verified
+    cooldown = Column(Integer, default=2)
+    lastcall = Column(Integer, default=0)
+    lastchan = Column(Integer, default=0)
 Guild.twitch = relationship("TwitchChannel", back_populates="guild")
