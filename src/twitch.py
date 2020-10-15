@@ -46,9 +46,12 @@ class T_Bot(commands.bot):
     @command.command(name="queue2")
     async def queue2(self, ctx):
         chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==ctx.channel.name).one_or_none()
-        users = chan.guild.users
-        count = len(users)
-        await ctx.send(f'There are {count} players waiting to play!')
+        tl = (chan.lastcall + 2) - int(time.time())
+        if tl < 0:
+            users = chan.guild.users
+            count = len(users)
+            await ctx.send(f'There are {count} players waiting to play!')
+            chan.lastcall = int(time.time())
     
     async def add_channel(self, chan):
         success = True

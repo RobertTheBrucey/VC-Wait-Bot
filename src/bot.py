@@ -231,7 +231,7 @@ async def update_last(guild_d, db=db):
     guild = await checkGuild(guild_d, db=db)
     users = guild.users
     msg = await bot.user.fetch_message(guild.lastedit)
-    tl = (msg.edited_at + guild.cooldown + 1) - int(time.time())
+    tl = (msg.edited_at.timestamp() + guild.cooldown + 1) - int(time.time())
     if tl <= 0:
         if len(users) > 0:
             queue = "```yaml\nCurrent Queue:"

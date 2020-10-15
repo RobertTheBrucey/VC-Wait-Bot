@@ -20,3 +20,5 @@ Plan:
 Need to handle the case of being added to a server while people are in the VC or when config changes
 
 Add twitch integration
+To Test:
+All twitch functions, auto edit message, server switch bug.
