@@ -234,6 +234,7 @@ async def update_last(guild_d, db=db):
     for c in guild_d.text_channels:
         try:
             msg = await c.fetch_message(guild.lastedit)
+            print(msg.content)
         except:
             pass
         if not msg is None:
