@@ -66,7 +66,7 @@ class T_Bot(commands.Bot):
             if not chan is None:
                 chan.verified = True
                 self.db.commit()
-                await ctx.send("Queue Bot Verified!")
+                await ctx.send(f"Queue Bot Verified! Use {self.prefix}leavequeue to send me away :(")
 
     @commands.command(name="leavequeue")
     async def leavequeue(self, ctx):
