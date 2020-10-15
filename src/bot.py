@@ -44,7 +44,7 @@ async def queue(ctx):
                 i += 1
             queue += "\n```"
             guild.lastedit = (await ctx.channel.send(queue)).id
-            if not check_auth(ctx):
+            if not await check_auth(ctx):
                 guild.lastcall = int(time.time())
             db.commit()
         else:
