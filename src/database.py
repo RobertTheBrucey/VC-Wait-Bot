@@ -25,6 +25,7 @@ class Guild(Base):
     #Cooldown tracking
     cooldown = Column(Integer, default=0)
     lastcall = Column(Integer, default=0)
+    lastedit = Column(Integer, default=0)
 
 class User(Base):
     __tablename__ = 'users'

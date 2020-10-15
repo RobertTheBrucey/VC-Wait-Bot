@@ -230,7 +230,7 @@ async def on_voice_state_update(member, before, after):
 async def update_last(guild_d, db=db):
     guild = await checkGuild(guild_d, db=db)
     users = guild.users
-    msg = await guild_d.fetch_message(guild.lastedit)
+    msg = guild_d.get_member(bot.user.id).fetch_message(guild.lastedit)
     tl = (msg.edited_at.timestamp() + guild.cooldown + 1) - int(time.time())
     if tl <= 0:
         if len(users) > 0:
@@ -242,10 +242,9 @@ async def update_last(guild_d, db=db):
                 queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
                 i += 1
             queue += "\n```"
-            guild.lastedit = (await msg.channel.edit(content=queue)).id
-            db.commit()
+            await msg.channel.edit(content=queue)
         else:
-            guild.lastedit = (await msg.channel.edit(content="```yaml\nQueue is empty\n```")).id
+            await msg.channel.edit(content="```yaml\nQueue is empty\n```")
 
 async def checkGuild(in_guild, db=db):
     guild = db.query(Guild).filter(Guild.id==in_guild.id).one_or_none()
