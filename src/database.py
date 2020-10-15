@@ -12,6 +12,7 @@ class Guild(Base):
     id = Column(Integer, primary_key=True)
     #Wait Channel
     channel = Column(Integer, default=0)
+    channel_playing = Column(Integer, default=0)
     #Users - FK
     
     #Grace Period
@@ -33,6 +34,8 @@ class User(Base):
     guild = relationship("Guild", back_populates="users")
     jointime = Column(Integer, default=0, nullable=False)
     leavetime = Column(Integer, default=0, nullable=False)
+    jointime_playing = Column(Integer, default=0, nullable=False)
+    leavetime_playing = Column(Integer, default=0, nullable=False)
 Guild.users = relationship("User", order_by=User.jointime, back_populates="guild")
 
 class RoleType(enum.Enum):
