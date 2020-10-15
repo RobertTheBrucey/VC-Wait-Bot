@@ -185,7 +185,7 @@ async def del_twitch(ctx):
         name = ctx.message.content.split(" ")[1]
         if not name[0] == "#":
             name = "#" + name
-        chan = db.query(TwitchChannel).filter(TwitchChannel.name==name)
+        chan = db.query(TwitchChannel).filter(TwitchChannel.name==name).one_or_none()
         if chan is None:
             await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
         else:
