@@ -66,6 +66,7 @@ class T_Bot(commands.Bot):
         if ctx.author.is_mod or ctx.author.name == chan.name:
             print("Is mod")
             if not chan is None:
+                print("Verified")
                 chan.verified = True
                 self.db.commit()
 
