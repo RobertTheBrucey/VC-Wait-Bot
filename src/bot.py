@@ -152,6 +152,8 @@ async def print_config(ctx):
         string += "```"
         await ctx.channel.send(string)
 
+@bot.command(name='addtwitch', description="Connect a Twitch channel",
+help=f"Connect a Twitch channel for {t_bot.prefix}queue", brief="Connect a Twitch channel")
 async def add_twitch(ctx):
     if await check_auth(ctx):
         guild = await checkGuild(ctx.guild, db=db)
@@ -174,7 +176,8 @@ async def add_twitch(ctx):
             else:
                 await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
         db.commit()
-
+@bot.command(name='removetwitch', description="Remove a connected Twitch channel",
+help=f"Remove a connected Twitch channel", brief="Remove a Twitch channel")
 async def del_twitch(ctx):
     if await check_auth(ctx):
         guild = await checkGuild(ctx.guild, db=db).one_or_none()
@@ -193,6 +196,8 @@ async def del_twitch(ctx):
                 await ctx.channel.send(f"```yaml\nTwitch channel {name} is not linked to this server. Naughty!\n```")
         db.commit()
 
+@bot.command(name='showtwitch', description="Show connected Twitch channels",
+help=f"Show connected Twitch channels", brief="Show connected Twitch channels")
 async def show_twitch(ctx):
     if await check_auth(ctx):
         guild = await checkGuild(ctx.guild, db=db)
@@ -234,7 +239,6 @@ async def update_last(guild_d, db=db):
     for c in guild_d.text_channels:
         try:
             msg = await c.fetch_message(guild.lastedit)
-            print(msg.content)
         except:
             pass
         if not msg is None:
