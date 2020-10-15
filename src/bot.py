@@ -190,7 +190,7 @@ async def del_twitch(ctx):
             await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
         else:
             if chan.guild == guild:
-                t_bot.del_channel(chan)
+                await t_bot.del_channel(chan)
                 db.delete(chan)
                 await ctx.channel.send(f"```yaml\nTwitch channel {name} has been removed\n```")
             else:
