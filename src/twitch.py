@@ -35,7 +35,7 @@ class T_Bot(commands.bot):
         if not ctx.author.name.lower() == parser["twitch"]["nick"]:
             await self.handle_commands(ctx)
 
-    @command.command(name="queue")
+    @commands.command(name="queue")
     async def queue(self, ctx):
         users = self.db.query(Guild).filter(Guild.id==239303808012779520).one_or_none().users
         count = len(users)
@@ -43,7 +43,7 @@ class T_Bot(commands.bot):
         #t = datetime.timedelta(seconds=(int(time.time()) - longest.jointime))
         await ctx.send(f'There are {count} players waiting to play!')
 
-    @command.command(name="queue2")
+    @commands.command(name="queue2")
     async def queue2(self, ctx):
         chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==ctx.channel.name).one_or_none()
         tl = (chan.lastcall + 2) - int(time.time())
