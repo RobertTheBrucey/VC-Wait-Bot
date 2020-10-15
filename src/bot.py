@@ -221,7 +221,7 @@ async def on_voice_state_update(member, before, after):
         user.guild = guild
         user.guild.users.remove(user)
     elif before.channel != chan and after.channel == chan:
-        if user.guild == guild and ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
+        if user.guild != guild or ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
             user.jointime = int(time.time())
         user.guild = guild
     db.commit()
