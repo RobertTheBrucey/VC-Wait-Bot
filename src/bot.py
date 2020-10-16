@@ -38,19 +38,95 @@ async def queue(ctx):
             queue = "```yaml\nCurrent Queue:"
             i = 1
             for u in sorted(users, key=lambda x: x.jointime):
-                nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
-                t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
-                queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
-                i += 1
+                if u.waiting:
+                    nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                    queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
+                    i += 1
             queue += "\n```"
             guild.lastedit = (await ctx.channel.send(queue)).id
             if not await check_auth(ctx):
                 guild.lastcall = int(time.time())
-            db.commit()
         else:
             guild.lastedit = (await ctx.channel.send("```yaml\nQueue is empty\n```")).id
+        db.commit()
     else:
         await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
+
+@bot.command(name='waitchannel', description="Set the channel to monitor for waiting users",
+help="Change the channel to monitor for waiting users", brief="Change wait channel")
+async def waitchannel(ctx, arg):
+    if (await check_auth(ctx)):
+        opts = []
+        for c in ctx.guild.voice_channels:
+            if arg in c.name.lower():
+                if arg == c.name.lower():
+                    opts = [c]
+                    break
+                opts.append(c)
+        if len(opts) == 1:
+            guild = await checkGuild(ctx.guild, db=db)
+            guild.channel = c.id 
+            db.commit()
+            await ctx.channel.send("```yaml\nWait channel set to " + c.name + "\n```")
+        elif len(opts) == 0:
+            await ctx.channel.send("```yaml\nNo channels match " + arg + ".\n```")
+        else:
+            chans = ""
+            for c in opts:
+                chans += c.name + "\n"
+            await ctx.channel.send("```yaml\nToo many matches, please be more specific.\n" + chans + "```")
+
+@bot.command(name='playing', description="Show the play time of current players.",
+help="Show the play time of current players.", brief="Show the players")
+async def playing(ctx):
+    guild = await checkGuild(ctx.guild, db=db)
+    users = guild.users
+    tl = (guild.lastcall + guild.cooldown) - int(time.time())
+    if (tl <= 0) or await check_auth(ctx):
+        if len(users) > 0:
+            queue = "```yaml\nCurrent Players:"
+            i = 1
+            for u in sorted(users, key=lambda x: x.jointime):
+                if not u.waiting:
+                    nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                    queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
+                    i += 1
+            queue += "\n```"
+            await ctx.channel.send(queue)
+            if not await check_auth(ctx):
+                guild.lastcall = int(time.time())
+            db.commit()
+        else:
+            await ctx.channel.send("```yaml\nQueue is empty\n```")
+    else:
+        await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
+
+@bot.command(name='playchannel', description="Set the channel to monitor for playing users",
+help="Change the channel to monitor for playing users", brief="Change play channel")
+async def playchannel(ctx, arg):
+    if (await check_auth(ctx)):
+        opts = []
+        for c in ctx.guild.voice_channels:
+            if arg in c.name.lower():
+                if arg == c.name.lower():
+                    opts = [c]
+                    break
+                opts.append(c)
+        if len(opts) == 1:
+            guild = await checkGuild(ctx.guild, db=db)
+            guild.channel_playing = c.id 
+            db.commit()
+            await ctx.channel.send("```yaml\nWait channel set to " + c.name + "\n```")
+        elif len(opts) == 0:
+            await ctx.channel.send("```yaml\nNo channels match " + arg + ".\n```")
+        else:
+            chans = ""
+            for c in opts:
+                chans += c.name + "\n"
+            await ctx.channel.send("```yaml\nToo many matches, please be more specific.\n" + chans + "```")
+
 
 '''@bot.command(name='position')
 async def position(ctx, arg):
@@ -79,30 +155,6 @@ async def grace(ctx, arg):
             await ctx.channel.send("```yaml\nGrace period changed to " + arg +" minutes\n```")
         else:
             await ctx.channel.send("```yaml\nError: Expected an integer for grace period\n```")
-
-@bot.command(name='waitchannel', description="Set the channel to monitor for waiting users",
-help="Change the channel to monitor for waiting users", brief="Change wait channel")
-async def waitchannel(ctx, arg):
-    if (await check_auth(ctx)):
-        opts = []
-        for c in ctx.guild.voice_channels:
-            if arg in c.name.lower():
-                if arg == c.name.lower():
-                    opts = [c]
-                    break
-                opts.append(c)
-        if len(opts) == 1:
-            guild = await checkGuild(ctx.guild, db=db)
-            guild.channel = c.id 
-            db.commit()
-            await ctx.channel.send("```yaml\nWait channel set to " + c.name + "\n```")
-        elif len(opts) == 0:
-            await ctx.channel.send("```yaml\nNo channels match " + arg + ".\n```")
-        else:
-            chans = ""
-            for c in opts:
-                chans += c.name + "\n"
-            await ctx.channel.send("```yaml\nToo many matches, please be more specific.\n" + chans + "```")
 
 '''#@commands.check(check_auth)
 @bot.command(name='allowrole')
@@ -146,6 +198,7 @@ async def print_config(ctx):
         guild = await checkGuild(ctx.guild, db=db)
         string += bot.get_guild(guild.id).name + "\n"
         string += "Wait Channel: " + ctx.guild.get_channel(guild.channel).name + "\n"
+        string += "Play Channel: " + ctx.guild.get_channel(guild.channel_playing).name + "\n"
         string += "Grace Period: " + str(guild.grace) + " minutes\n"
         string += "Cooldown Time: " + str(guild.cooldown) + " seconds\n"
         string += "Management role: " + str(ctx.guild.get_role(guild.management_role)) + "\n"
@@ -222,14 +275,29 @@ async def on_voice_state_update(member, before, after):
     user = await get_user(member.id, db=db)
     chanid = guild.channel
     chan = member.guild.get_channel(chanid)
-    if before.channel == chan and after.channel != chan:
+    p_chan = member.guild.get_channel(guild.channel_playing)
+    if after.channel == chan and before.channel != chan: #Moved into waiting
+        if user.guild != guild or ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
+                user.jointime = int(time.time())
+        user.guild = guild
+        guild.users.append(user)
+        user.waiting = True
+    elif after.channel == p_chan and before.channel != chan: #Moved into playing
+        if user.guild != guild or ((int(time.time()) - user.leavetime_playing) > (guild.grace * 60)):
+                user.jointime_playing = int(time.time())
+        user.guild = guild
+        guild.users.append(user)
+        user.waiting = False
+    if before.channel == chan and after.channel != chan: #Left waiting
         user.leavetime = int(time.time())
         user.guild = guild
-        user.guild.users.remove(user)
-    elif before.channel != chan and after.channel == chan:
-        if user.guild != guild or ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
-            user.jointime = int(time.time())
+        if after.channel != p_chan:
+            user.guild.users.remove(user)
+    elif before.channel == p_chan and after.channel != p_chan: #Left playing
+        user.leavetime_playing = int(time.time())
         user.guild = guild
+        if after.channel != chan:
+            user.guild.users.remove(user)
     db.commit()
     await update_last(member.guild, db=db)
 
@@ -269,6 +337,7 @@ async def checkGuild(in_guild, db=db):
     if guild == None:
         guild = Guild(id=in_guild.id)
         guild.channel = await get_default_channel(in_guild)
+        guild.channel_playing = await get_default_playing(in_guild)
         db.add(guild)
         db.commit()
     return guild
@@ -281,23 +350,47 @@ async def get_default_channel(in_guild):
             chan = c
     return chan.id
 
+async def get_default_playing(in_guild):
+    channels = in_guild.voice_channels
+    chan = channels[0]
+    for c in channels:
+        if "stream" in c.name.lower():
+            chan = c
+        elif "play" in c.name.lower():
+            chan = c
+    return chan.id
+
 async def update_users(in_guild, db=db):
     guild = bot.get_guild(in_guild.id)
     guild_db = await checkGuild(guild, db=db)
     chan = guild.get_channel(guild_db.channel)
+    chan_p = guild.get_channel(guild_db.channel_playing)
     members = chan.voice_states
-    for user in guild_db.users:
+    members_p = chan_p.voice_states
+    for user in guild_db.users: #Remove users not in VC
         u = user.id
-        if u not in members:
+        if u not in members + members_p:
             user.leavetime = int(time.time())
             user.guild = guild_db
             user.guild.users.remove(user)
-    for user in members:
+    for user in members: #Add users in waiting
+        #guild.users.append(user)
         u = await get_user(user) #from DB
         if u not in guild_db.users:
             try:
-                #u.guild = guild_db #This doesn't work
                 guild_db.users.append(u)
+                u.waiting = True
+            except Exception as e:
+                print(e)
+            if (int(time.time()) - u.leavetime) > (guild_db.grace * 60):
+                u.jointime = int(time.time())
+    for user in members_p: #Add users in playing
+        #guild.users.append(user)
+        u = await get_user(user) #from DB
+        if u not in guild_db.users:
+            try:
+                guild_db.users.append(u)
+                u.waiting = False
             except Exception as e:
                 print(e)
             if (int(time.time()) - u.leavetime) > (guild_db.grace * 60):
