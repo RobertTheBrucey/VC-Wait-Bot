@@ -424,7 +424,7 @@ async def update_users(guild, db=db):
     print(members)
     for user in guild_db.users: #Remove users not in VC
         u = user.id
-        if u not in members + members_p:
+        if u not in members.update(members_p):
             user.leavetime = int(time.time())
             user.guild = guild_db
             user.waiting = Status.none
