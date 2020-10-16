@@ -129,10 +129,10 @@ async def playing(ctx):
         if len(users) > 0:
             queue = "```yaml\nCurrent Players:"
             i = 1
-            for u in sorted(users, key=lambda x: x.jointime):
+            for u in sorted(users, key=lambda x: x.jointime_playing):
                 if u.waiting == Status.playing:
                     nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
-                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime_playing))
                     queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
                     i += 1
             queue += "\n```"
