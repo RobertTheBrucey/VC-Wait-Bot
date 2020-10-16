@@ -421,7 +421,6 @@ async def update_users(guild, db=db):
     chan_p = guild.get_channel(guild_db.channel_playing)
     members = chan.voice_states
     members_p = chan_p.voice_states
-    print(members)
     for user in guild_db.users: #Remove users not in VC
         u = user.id
         if u not in {**members, **members_p}:
@@ -436,7 +435,7 @@ async def update_users(guild, db=db):
                 u.waiting = Status.waiting
             except Exception as e:
                 print(e)
-            if (int(time.time()) - u.leavetime) > (guild_db.grace * 60):
+            if (int(time.time()) - u.leavetime) > (guild_db.grace * 60) or u.jointime == 0:
                 u.jointime = int(time.time())
     for user in members_p: #Add users in playing
         u = await get_user(user) #from DB
@@ -446,7 +445,7 @@ async def update_users(guild, db=db):
                 u.waiting = Status.playing
             except Exception as e:
                 print(e)
-            if (int(time.time()) - u.leavetime_playing) > (guild_db.grace * 60):
+            if (int(time.time()) - u.leavetime_playing) > (guild_db.grace * 60) or u.jointime_playing == 0:
                 u.jointime_playing = int(time.time())
     db.commit()
     
