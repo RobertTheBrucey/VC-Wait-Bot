@@ -38,13 +38,13 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     guild_id = Column(Integer, ForeignKey('guilds.id'))
-    guild = relationship("Guild")
+    guild = relationship("Guild", back_populates="users")
     jointime = Column(Integer, default=0, nullable=False)
     leavetime = Column(Integer, default=0, nullable=False)
     jointime_playing = Column(Integer, default=0, nullable=False)
     leavetime_playing = Column(Integer, default=0, nullable=False)
     waiting = Column(Enum(Status), default=Status.none)
-Guild.users = relationship("User", order_by=User.jointime)
+Guild.users = relationship("User", order_by=User.jointime, back_populates="guild")
 
 class RoleType(enum.Enum):
     none = 0
