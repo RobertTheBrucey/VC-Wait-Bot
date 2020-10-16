@@ -69,7 +69,7 @@ async def resetqueue(ctx):
             u.jointime = ct
             u.leavetime = 0
         db.commit()
-        await ctx.channel.send("```yaml\nAll queue times have been reset")
+        await ctx.channel.send("```yaml\nAll queue times have been reset\n```")
 
 @bot.command(name='resetplaying', description="Reset the times for all users",
 help="Resets all playing times.", brief="Reset play times")
@@ -81,7 +81,7 @@ async def resetplaying(ctx):
             u.jointime_playing = ct
             u.leavetime_playing = 0
         db.commit()
-        await ctx.channel.send("```yaml\nAll playing times have been reset")
+        await ctx.channel.send("```yaml\nAll playing times have been reset\n```")
 
 @bot.command(name='privilegecommands', description="Toggle priviledge commands mode",
 help="Toggles whether unprivileged users can use queue and playing", brief="Toggle privileged commands")
