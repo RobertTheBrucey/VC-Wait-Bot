@@ -415,13 +415,13 @@ async def get_default_playing(in_guild):
             chan = c
     return chan.id
 
-async def update_users(in_guild, db=db):
-    guild = bot.get_guild(in_guild.id)
+async def update_users(guild, db=db):
     guild_db = await checkGuild(guild, db=db)
     chan = guild.get_channel(guild_db.channel)
     chan_p = guild.get_channel(guild_db.channel_playing)
     members = chan.voice_states
     members_p = chan_p.voice_states
+    print(members)
     for user in guild_db.users: #Remove users not in VC
         u = user.id
         if u not in members + members_p:
