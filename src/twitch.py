@@ -2,7 +2,7 @@ from twitchio.ext import commands
 from configparser import ConfigParser
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database import Guild, User, Role, Base, TwitchChannel
+from database import Guild, User, Role, Base, TwitchChannel, Status
 import enum
 import time
 import datetime
@@ -44,7 +44,7 @@ class T_Bot(commands.Bot):
         if chan.verified:
             tl = (chan.lastcall + 2) - int(time.time())
             if tl < 0:
-                users = chan.guild.users
+                users = [u for u in chan.guild.users if u.waiting == Status.waiting]
                 count = len(users)
                 await ctx.send(f'There are {count} players waiting to play!')
                 chan.lastcall = int(time.time())
@@ -63,7 +63,7 @@ class T_Bot(commands.Bot):
     @commands.command(name="verifyqueue")
     async def verify(self, ctx):
         chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==ctx.channel.name).one_or_none()
-        if ctx.author.is_mod or ctx.author.name == self.nick:# or ctx.author.name == chan.name:
+        if ctx.author.is_mod:# or ctx.author.name == chan.name:
             if not chan is None:
                 chan.verified = True
                 self.db.commit()
