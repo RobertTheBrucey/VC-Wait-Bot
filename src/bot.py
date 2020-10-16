@@ -291,14 +291,15 @@ async def on_voice_state_update(member, before, after):
         user.waiting = False
     if before.channel == chan and after.channel != chan: #Left waiting
         user.leavetime = int(time.time())
-        user.guild = guild
+        
         if after.channel != p_chan:
             user.guild.users.remove(user)
+        user.guild = guild
     elif before.channel == p_chan and after.channel != p_chan: #Left playing
         user.leavetime_playing = int(time.time())
-        user.guild = guild
         if after.channel != chan:
             user.guild.users.remove(user)
+        user.guild = guild
     db.commit()
     await update_last(member.guild, db=db)
 
