@@ -482,11 +482,11 @@ async def check_auth(ctx):
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
-    await t_bot.start()
     await bot.change_presence(activity=discord.Activity(name="^help", type=discord.ActivityType.listening))
     await bot.wait_until_ready()
     for g in bot.guilds:
         await update_users(g, db=db)
+    await t_bot.start()
 
 if __name__ == "__main__":
     try:
