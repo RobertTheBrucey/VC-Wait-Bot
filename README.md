@@ -1,6 +1,7 @@
 # VC-Wait-Bot
 
 To Do:
+* Reset wait times
 * Need to handle the case of being added to a server while people are in the VC or when config changes
 * Get front of the queue
 * Have bot move front of queue from waitroom to playing

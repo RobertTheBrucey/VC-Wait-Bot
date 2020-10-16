@@ -43,7 +43,7 @@ async def queue(ctx):
                     t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
                     queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
                     i += 1
-            queue += "\n```"
+            queue += "\nThis message will be auto updated until ^queue is used again\n```"
             guild.lastedit = (await ctx.channel.send(queue)).id
             if not await check_auth(ctx):
                 guild.lastcall = int(time.time())
@@ -334,7 +334,7 @@ async def update_last(guild_d, db=db):
                     t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
                     queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
                     i += 1
-            queue += "\n```"
+            queue += "\nThis message will be auto updated until ^queue is used again\n```"
             await msg.edit(content=queue)
         else:
             await msg.edit(content="```yaml\nQueue is empty\n```")
