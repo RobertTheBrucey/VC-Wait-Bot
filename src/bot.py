@@ -3,7 +3,7 @@ from discord.ext import commands
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
-from database import Guild, User, Role, Base, TwitchChannel
+from database import Guild, User, Role, Base, TwitchChannel, Status
 from config import getToken
 import asyncio
 import time
@@ -38,7 +38,7 @@ async def queue(ctx):
             queue = "```yaml\nCurrent Queue:"
             i = 1
             for u in sorted(users, key=lambda x: x.jointime):
-                if u.waiting:
+                if u.waiting == Status.waiting:
                     nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
                     t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
                     queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
@@ -88,7 +88,7 @@ async def playing(ctx):
             queue = "```yaml\nCurrent Players:"
             i = 1
             for u in sorted(users, key=lambda x: x.jointime):
-                if not u.waiting:
+                if u.waiting == Status.playing:
                     nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
                     t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
                     queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
@@ -278,29 +278,29 @@ async def on_voice_state_update(member, before, after):
     p_chan = member.guild.get_channel(guild.channel_playing)
     if after.channel == chan and before.channel != chan: #Moved into waiting
         print(f"{user.guild} {guild} {user.leavetime} {int(time.time())} {user.guild_id}")
-        #if user.guild != guild or ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
-        if ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
-                user.jointime = int(time.time())
+        if user.guild != guild or ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
+            user.jointime = int(time.time())
         user.guild = guild
         guild.users.append(user)
-        user.waiting = True
+        user.waiting = Status.waiting
     elif after.channel == p_chan and before.channel != p_chan: #Moved into playing
-        #if user.guild != guild or ((int(time.time()) - user.leavetime_playing) > (guild.grace * 60)):
-        if ((int(time.time()) - user.leavetime_playing) > (guild.grace * 60)):
-                user.jointime_playing = int(time.time())
+        if user.guild != guild or ((int(time.time()) - user.leavetime_playing) > (guild.grace * 60)):
+            user.jointime_playing = int(time.time())
         user.guild = guild
         guild.users.append(user)
-        user.waiting = False
+        user.waiting = Status.playing
     if before.channel == chan and after.channel != chan: #Left waiting
         user.leavetime = int(time.time())
         if after.channel != p_chan:
             user.guild.users.remove(user)
         user.guild = guild
+        user.waiting = Status.none
     elif before.channel == p_chan and after.channel != p_chan: #Left playing
         user.leavetime_playing = int(time.time())
         if after.channel != chan:
             user.guild.users.remove(user)
         user.guild = guild
+        user.waiting = Status.none
     db.commit()
     await update_last(member.guild, db=db)
 
@@ -375,14 +375,14 @@ async def update_users(in_guild, db=db):
         if u not in members + members_p:
             user.leavetime = int(time.time())
             user.guild = guild_db
-            user.guild.users.remove(user)
+            user.waiting = Status.none
     for user in members: #Add users in waiting
         #guild.users.append(user)
         u = await get_user(user) #from DB
         if u not in guild_db.users:
             try:
                 guild_db.users.append(u)
-                u.waiting = True
+                u.waiting = Status.waiting
             except Exception as e:
                 print(e)
             if (int(time.time()) - u.leavetime) > (guild_db.grace * 60):
@@ -393,7 +393,7 @@ async def update_users(in_guild, db=db):
         if u not in guild_db.users:
             try:
                 guild_db.users.append(u)
-                u.waiting = False
+                u.waiting = Status.playing
             except Exception as e:
                 print(e)
             if (int(time.time()) - u.leavetime) > (guild_db.grace * 60):

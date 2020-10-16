@@ -37,8 +37,13 @@ class User(Base):
     leavetime = Column(Integer, default=0, nullable=False)
     jointime_playing = Column(Integer, default=0, nullable=False)
     leavetime_playing = Column(Integer, default=0, nullable=False)
-    waiting = Column(Boolean, default=True)
+    waiting = Column(Enum(Status), default=Status.none)
 Guild.users = relationship("User", order_by=User.jointime)
+
+class Status(enum.Enum):
+    none = 0
+    waiting = 1
+    playing = 2
 
 class RoleType(enum.Enum):
     none = 0
