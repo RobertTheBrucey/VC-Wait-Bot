@@ -435,7 +435,7 @@ async def update_users(guild, db=db):
                 u.waiting = Status.waiting
             except Exception as e:
                 print(e)
-            if (int(time.time()) - u.leavetime) > (guild_db.grace * 60) or u.jointime == 0:
+            if (int(time.time()) - u.leavetime) > (guild_db.grace * 60):
                 u.jointime = int(time.time())
     for user in members_p: #Add users in playing
         u = await get_user(user) #from DB
@@ -445,7 +445,7 @@ async def update_users(guild, db=db):
                 u.waiting = Status.playing
             except Exception as e:
                 print(e)
-            if (int(time.time()) - u.leavetime_playing) > (guild_db.grace * 60) or u.jointime_playing == 0:
+            if (int(time.time()) - u.leavetime_playing) > (guild_db.grace * 60):
                 u.jointime_playing = int(time.time())
     db.commit()
     
