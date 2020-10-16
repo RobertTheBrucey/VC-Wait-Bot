@@ -36,7 +36,10 @@ class T_Bot(commands.Bot):
 
     async def event_message(self, ctx):
         if not ctx.author.name.lower() == parser["twitch"]["nick"]:
-            await self.handle_commands(ctx)
+            try:
+                await self.handle_commands(ctx)
+            except:
+                pass
 
     @commands.command(name="queue")
     async def queue(self, ctx):
