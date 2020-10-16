@@ -33,7 +33,7 @@ async def queue(ctx):
     guild = await checkGuild(ctx.guild, db=db)
     users = guild.users
     tl = (guild.lastcall + guild.cooldown) - int(time.time())
-    if (tl <= 0) or await check_auth(ctx):
+    if (tl <= 0) or await check_auth(ctx) or guild.privcomms:
         if len(users) > 0:
             queue = "```yaml\nCurrent Queue:"
             i = 1
@@ -44,16 +44,22 @@ async def queue(ctx):
                     queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
                     i += 1
             queue += "\nThis message will be auto updated until ^queue is used again\n```"
-            guild.lastedit = (await ctx.channel.send(queue)).id
+            if not guild.privcomms or await check_auth(ctx):
+                guild.lastedit = (await ctx.channel.send(queue)).id
+            else:
+                await ctx.author.send(queue)
             if not await check_auth(ctx):
                 guild.lastcall = int(time.time())
         else:
-            guild.lastedit = (await ctx.channel.send("```yaml\nQueue is empty\n```")).id
+            if not guild.privcomms or await check_auth(ctx):
+                guild.lastedit = (await ctx.channel.send("```yaml\nQueue is empty\n```")).id
+            else:
+                await ctx.author.send("```yaml\nQueue is empty\n```")
         db.commit()
     else:
         await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
 
-@bot.commands(name='resetqueue', description="Reset the times for all users",
+@bot.command(name='resetqueue', description="Reset the times for all users",
 help="Resets all queue times.", brief="Reset queue times")
 async def resetqueue(ctx):
     if await check_auth(ctx):
@@ -65,7 +71,7 @@ async def resetqueue(ctx):
         db.commit()
         await ctx.channel.send("```yaml\nAll queue times have been reset")
 
-@bot.commands(name='resetplaying', description="Reset the times for all users",
+@bot.command(name='resetplaying', description="Reset the times for all users",
 help="Resets all playing times.", brief="Reset play times")
 async def resetplaying(ctx):
     if await check_auth(ctx):
@@ -77,6 +83,17 @@ async def resetplaying(ctx):
         db.commit()
         await ctx.channel.send("```yaml\nAll playing times have been reset")
 
+@bot.command(name='privilegecommands', description="Toggle priviledge commands mode",
+help="Toggles whether unprivileged users can use queue and playing", brief="Toggle privileged commands")
+async def toggle_priv(ctx):
+    if await check_auth(ctx):
+        guild = await checkGuild(ctx.guild, db=db)
+        guild.privcomms = not guild.privcomms
+        db.commit
+        if guild.privcomms:
+            await ctx.channel.send("```yaml\nqueue and playing commands now DM unprivileged users\n```")
+        else:
+            await ctx.channel.send("```yaml\nqueue and playing commands can now be used by all users\n```")
 
 @bot.command(name='waitchannel', description="Set the channel to monitor for waiting users",
 help="Change the channel to monitor for waiting users", brief="Change wait channel")
@@ -108,7 +125,7 @@ async def playing(ctx):
     guild = await checkGuild(ctx.guild, db=db)
     users = guild.users
     tl = (guild.lastcall + guild.cooldown) - int(time.time())
-    if (tl <= 0) or await check_auth(ctx):
+    if (tl <= 0) or await check_auth(ctx) or guild.privcomms:
         if len(users) > 0:
             queue = "```yaml\nCurrent Players:"
             i = 1
@@ -119,12 +136,18 @@ async def playing(ctx):
                     queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
                     i += 1
             queue += "\n```"
-            await ctx.channel.send(queue)
+            if not guild.privcomms or await check_auth(ctx):
+                await ctx.channel.send(queue)
+            else:
+                await ctx.author.send(queue)
             if not await check_auth(ctx):
                 guild.lastcall = int(time.time())
             db.commit()
         else:
-            await ctx.channel.send("```yaml\nNo one is playing right now\n```")
+            if not guild.privcomms or await check_auth(ctx):
+                await ctx.channel.send("```yaml\nNo one is playing right now\n```")
+            else:
+                await ctx.author.send("```yaml\nNo one is playing right now\n```")
     else:
         await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
 

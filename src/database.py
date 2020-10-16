@@ -26,6 +26,7 @@ class Guild(Base):
     cooldown = Column(Integer, default=0)
     lastcall = Column(Integer, default=0)
     lastedit = Column(Integer, default=0)
+    privcomms = Column(Boolean, default=False)
 
 class Status(enum.Enum):
     none = 0
