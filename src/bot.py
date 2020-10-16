@@ -38,11 +38,10 @@ async def queue(ctx):
             queue = "```yaml\nCurrent Queue:"
             i = 1
             for u in sorted(users, key=lambda x: x.jointime):
-                if u.waiting == Status.waiting:
-                    nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
-                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
-                    queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
-                    i += 1
+                nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+                t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
+                i += 1
             queue += "\nThis message will be auto updated until ^queue is used again\n```"
             if not guild.privcomms or await check_auth(ctx):
                 guild.lastedit = (await ctx.channel.send(queue)).id
@@ -130,11 +129,10 @@ async def playing(ctx):
             queue = "```yaml\nCurrent Players:"
             i = 1
             for u in sorted(users, key=lambda x: x.jointime_playing):
-                if u.waiting == Status.playing:
-                    nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
-                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime_playing))
-                    queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
-                    i += 1
+                nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+                t = datetime.timedelta(seconds=(int(time.time()) - u.jointime_playing))
+                queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
+                i += 1
             queue += "\n```"
             if not guild.privcomms or await check_auth(ctx):
                 await ctx.channel.send(queue)
@@ -357,7 +355,7 @@ async def on_voice_state_update(member, before, after):
 
 async def update_last(guild_d, db=db):
     guild = await checkGuild(guild_d, db=db)
-    users = guild.users
+    users = [ u for u in guild.users if u.waiting == Status.waiting ]
     msg = None
     for c in guild_d.text_channels:
         try:
@@ -377,11 +375,10 @@ async def update_last(guild_d, db=db):
             queue = "```yaml\nCurrent Queue:"
             i = 1
             for u in sorted(users, key=lambda x: x.jointime):
-                if u.waiting == Status.waiting:
-                    nick = msg.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
-                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
-                    queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
-                    i += 1
+                nick = msg.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+                t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
+                i += 1
             queue += "\nThis message will be auto updated until ^queue is used again\n```"
             await msg.edit(content=queue)
         else:
