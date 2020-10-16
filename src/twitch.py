@@ -3,6 +3,7 @@ from configparser import ConfigParser
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database import Guild, User, Role, Base, TwitchChannel
+import Enum
 import time
 import datetime
 
