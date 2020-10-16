@@ -324,10 +324,11 @@ async def update_last(guild_d, db=db):
             queue = "```yaml\nCurrent Queue:"
             i = 1
             for u in sorted(users, key=lambda x: x.jointime):
-                nick = msg.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
-                t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
-                queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
-                i += 1
+                if u.waiting == Status.waiting:
+                    nick = msg.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                    queue += "\n" + str(i) + ": " + str(nick) + ": " + str(t)
+                    i += 1
             queue += "\n```"
             await msg.edit(content=queue)
         else:
