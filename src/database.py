@@ -27,6 +27,11 @@ class Guild(Base):
     lastcall = Column(Integer, default=0)
     lastedit = Column(Integer, default=0)
 
+class Status(enum.Enum):
+    none = 0
+    waiting = 1
+    playing = 2
+
 class User(Base):
     __tablename__ = 'users'
 
@@ -39,11 +44,6 @@ class User(Base):
     leavetime_playing = Column(Integer, default=0, nullable=False)
     waiting = Column(Enum(Status), default=Status.none)
 Guild.users = relationship("User", order_by=User.jointime)
-
-class Status(enum.Enum):
-    none = 0
-    waiting = 1
-    playing = 2
 
 class RoleType(enum.Enum):
     none = 0
