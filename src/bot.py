@@ -276,30 +276,36 @@ async def on_voice_state_update(member, before, after):
     chanid = guild.channel
     chan = member.guild.get_channel(chanid)
     p_chan = member.guild.get_channel(guild.channel_playing)
+    update = False
     if after.channel == chan and before.channel != chan: #Moved into waiting
         if user.guild != guild or ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
             user.jointime = int(time.time())
         user.guild = guild
         guild.users.append(user)
         user.waiting = Status.waiting
+        update = True
     elif after.channel == p_chan and before.channel != p_chan: #Moved into playing
         if user.guild != guild or ((int(time.time()) - user.leavetime_playing) > (guild.grace * 60)):
             user.jointime_playing = int(time.time())
         user.guild = guild
         guild.users.append(user)
         user.waiting = Status.playing
+        update = True
     if before.channel == chan and after.channel != chan: #Left waiting
         user.leavetime = int(time.time())
         if after.channel != p_chan:
                 user.waiting = Status.none
         user.guild = guild
+        update = True
     elif before.channel == p_chan and after.channel != p_chan: #Left playing
         user.leavetime_playing = int(time.time())
         if after.channel != chan:
                 user.waiting = Status.none
         user.guild = guild
+        update = True
     db.commit()
-    await update_last(member.guild, db=db)
+    if update:
+        await update_last(member.guild, db=db)
 
 async def update_last(guild_d, db=db):
     guild = await checkGuild(guild_d, db=db)
