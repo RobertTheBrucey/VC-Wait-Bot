@@ -283,7 +283,7 @@ async def on_voice_state_update(member, before, after):
         user.guild = guild
         guild.users.append(user)
         user.waiting = True
-    elif after.channel == p_chan and before.channel != chan: #Moved into playing
+    elif after.channel == p_chan and before.channel != p_chan: #Moved into playing
         print("Moved to Playing")
         if user.guild != guild or ((int(time.time()) - user.leavetime_playing) > (guild.grace * 60)):
                 user.jointime_playing = int(time.time())
