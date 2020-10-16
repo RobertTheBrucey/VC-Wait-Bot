@@ -99,7 +99,7 @@ async def playing(ctx):
                 guild.lastcall = int(time.time())
             db.commit()
         else:
-            await ctx.channel.send("```yaml\nQueue is empty\n```")
+            await ctx.channel.send("```yaml\nNo one is playing right now\n```")
     else:
         await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
 
@@ -277,12 +277,14 @@ async def on_voice_state_update(member, before, after):
     chan = member.guild.get_channel(chanid)
     p_chan = member.guild.get_channel(guild.channel_playing)
     if after.channel == chan and before.channel != chan: #Moved into waiting
+        print("Moved to Waiting")
         if user.guild != guild or ((int(time.time()) - user.leavetime) > (guild.grace * 60)):
                 user.jointime = int(time.time())
         user.guild = guild
         guild.users.append(user)
         user.waiting = True
     elif after.channel == p_chan and before.channel != chan: #Moved into playing
+        print("Moved to Playing")
         if user.guild != guild or ((int(time.time()) - user.leavetime_playing) > (guild.grace * 60)):
                 user.jointime_playing = int(time.time())
         user.guild = guild
