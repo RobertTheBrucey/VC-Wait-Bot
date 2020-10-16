@@ -31,7 +31,7 @@ t_bot = T_Bot(db)
 help="Show the queue of players in the waiting channel.", brief="Show the queue")
 async def queue(ctx):
     guild = await checkGuild(ctx.guild, db=db)
-    users = guild.users
+    users = [ u for u in guild.users if u.waiting == Status.waiting ]
     tl = (guild.lastcall + guild.cooldown) - int(time.time())
     if (tl <= 0) or await check_auth(ctx) or guild.privcomms:
         if len(users) > 0:
@@ -123,7 +123,7 @@ async def waitchannel(ctx, arg):
 help="Show the play time of current players.", brief="Show the players")
 async def playing(ctx):
     guild = await checkGuild(ctx.guild, db=db)
-    users = guild.users
+    users = [ u for u in guild.users if u.waiting == Status.playing ]
     tl = (guild.lastcall + guild.cooldown) - int(time.time())
     if (tl <= 0) or await check_auth(ctx) or guild.privcomms:
         if len(users) > 0:
