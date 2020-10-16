@@ -430,6 +430,7 @@ async def update_users(in_guild, db=db):
             user.waiting = Status.none
     for user in members: #Add users in waiting
         #guild.users.append(user)
+        print(user)
         u = await get_user(user.id) #from DB
         print(u.id)
         if u not in guild_db.users:
@@ -443,8 +444,9 @@ async def update_users(in_guild, db=db):
                 u.jointime = int(time.time())
     for user in members_p: #Add users in playing
         #guild.users.append(user)
-        print(u.id)
+        print(user)
         u = await get_user(user.id) #from DB
+        print(u.id)
         if u not in guild_db.users:
             print("Adding playing")
             try:
