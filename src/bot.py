@@ -53,6 +53,31 @@ async def queue(ctx):
     else:
         await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
 
+@bot.commands(name='resetqueue', description="Reset the times for all users",
+help="Resets all queue times.", brief="Reset queue times")
+async def resetqueue(ctx):
+    if await check_auth(ctx):
+        guild = await checkGuild(ctx.guild, db=db)
+        ct = int(time.time())
+        for u in guild.users:
+            u.jointime = ct
+            u.leavetime = 0
+        db.commit()
+        await ctx.channel.send("```yaml\nAll queue times have been reset")
+
+@bot.commands(name='resetplaying', description="Reset the times for all users",
+help="Resets all playing times.", brief="Reset play times")
+async def resetplaying(ctx):
+    if await check_auth(ctx):
+        guild = await checkGuild(ctx.guild, db=db)
+        ct = int(time.time())
+        for u in guild.users:
+            u.jointime_playing = ct
+            u.leavetime_playing = 0
+        db.commit()
+        await ctx.channel.send("```yaml\nAll playing times have been reset")
+
+
 @bot.command(name='waitchannel', description="Set the channel to monitor for waiting users",
 help="Change the channel to monitor for waiting users", brief="Change wait channel")
 async def waitchannel(ctx, arg):
@@ -400,8 +425,8 @@ async def update_users(in_guild, db=db):
                 u.waiting = Status.playing
             except Exception as e:
                 print(e)
-            if (int(time.time()) - u.leavetime) > (guild_db.grace * 60):
-                u.jointime = int(time.time())
+            if (int(time.time()) - u.leavetime_playing) > (guild_db.grace * 60):
+                u.jointime_playing = int(time.time())
     db.commit()
     
 async def get_user(user_id, db=db): #Add use if not in db
