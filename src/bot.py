@@ -54,6 +54,10 @@ async def queue(ctx):
                 guild.lastedit = (await ctx.channel.send("```yaml\nQueue is empty\n```")).id
             else:
                 await ctx.author.send("```yaml\nQueue is empty\n```")
+                try:
+                    await ctx.message.delete()
+                except:
+                    pass
         db.commit()
     else:
         await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
@@ -146,6 +150,10 @@ async def playing(ctx):
                 await ctx.channel.send("```yaml\nNo one is playing right now\n```")
             else:
                 await ctx.author.send("```yaml\nNo one is playing right now\n```")
+                try:
+                    await ctx.message.delete()
+                except:
+                    pass
     else:
         await ctx.channel.send("```yaml\nCommand on cooldown, please wait " + str(tl) + " seconds.\n```")
 
