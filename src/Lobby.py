@@ -50,6 +50,7 @@ class Lobby(commands.Cog):
             else:
                 queue = "```yaml\nQueue is empty\n```"
                 if not guild.privcomms or auth:
+                    delete_last(ctx.guild, self.db)
                     guild.lastedit = (await ctx.channel.send(queue)).id
                     if not auth:
                         guild.lastcall = int(time.time())
@@ -178,6 +179,31 @@ class Lobby(commands.Cog):
                 await msg.edit(content=queue)
             else:
                 await msg.edit(content="```yaml\nQueue is empty\n```")
+    
+    async def delete_last(self, guild_d, db) -> None:
+        """Delete last sent lobby message
+
+        Parameters
+        ----------
+        guild_d : discord.Guild
+            Discord Guild to update
+        db : Session
+            SQLAlchemy database session to query
+        """
+
+        guild = await checkGuild(guild_d, db=self.db)
+        users = [ u for u in guild.users if u.waiting == Status.waiting ]
+        msg = None
+        for c in guild_d.text_channels: #This block could be cleaner?
+            try:
+                msg = await c.fetch_message(guild.lastedit)
+            except:
+                pass
+            if not msg is None:
+                break
+        if msg is None:
+            return
+        msg.delete()
 
     async def update_users(self, guild) -> None:
         """Update user status in monitored channels
