@@ -46,7 +46,10 @@ class Lobby(commands.Cog):
                     t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
                     queue += f"\n{i}: {nick}: {t}"
                     i += 1
-                queue += "\nThis message will be auto updated until ^lobby is used again\n```"
+                if not guild.privcomms or auth:
+                    queue += "\nThis message will be auto updated until ^lobby is used again\n```"
+                else:
+                    queue +="\n```"
             else:
                 queue = "```yaml\nLobby is empty\n```"
                 if not guild.privcomms or auth:
@@ -83,7 +86,10 @@ class Lobby(commands.Cog):
                     t = datetime.timedelta(seconds=(int(time.time()) - u.jointime_playing))
                     queue += f"\n{i}: {nick}: {t}"
                     i += 1
-                queue += "\n```"
+                if not guild.privcomms or auth:
+                    queue += "\nThis message will be auto updated until ^lobby is used again\n```"
+                else:
+                    queue +="\n```"
             else:
                 queue = "```yaml\nNo one is Active right now\n```"
                 if not guild.privcomms or auth:
