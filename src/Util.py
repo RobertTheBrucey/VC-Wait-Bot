@@ -88,3 +88,27 @@ async def check_auth(ctx, bot):
     ctx.message.author.guild_permissions.administrator or \
     (not manrole is None and manrole in ctx.message.author.roles)
     return allowed
+
+async def delete_own(self, guild_d, msg_id, db) -> None:
+    """Delete last sent lobby message
+
+    Parameters
+    ----------
+    guild_d : discord.Guild
+        Discord Guild to update
+    db : Session
+        SQLAlchemy database session to query
+    """
+
+    guild = await checkGuild(guild_d, db=self.db)
+    msg = None
+    for c in guild_d.text_channels: #This block could be cleaner?
+        try:
+            msg = await c.fetch_message(msg_id)
+        except:
+            pass
+        if not msg is None:
+            break
+    if msg is None:
+        return
+    msg.delete()

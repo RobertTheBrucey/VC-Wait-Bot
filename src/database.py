@@ -42,6 +42,7 @@ class Guild(Base):
     lastcall = Column(Integer, default=0)
     lastedit = Column(Integer, default=0)
     privcomms = Column(Boolean, default=False)
+    lastplay = Column(Integer, default=0)
 
 class Status(enum.Enum):
     """

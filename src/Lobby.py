@@ -39,18 +39,18 @@ class Lobby(commands.Cog):
         if tl <= 0 or auth or guild.privcomms:
             queue = ""
             if users:
-                queue = "```yaml\nCurrent Queue:"
+                queue = "```yaml\nCurrent Lobby:"
                 i = 1
                 for u in sorted(users, key=lambda x: x.jointime):
                     nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
                     t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
                     queue += f"\n{i}: {nick}: {t}"
                     i += 1
-                queue += "\nThis message will be auto updated until ^queue is used again\n```"
+                queue += "\nThis message will be auto updated until ^lobby is used again\n```"
             else:
-                queue = "```yaml\nQueue is empty\n```"
+                queue = "```yaml\nLobby is empty\n```"
                 if not guild.privcomms or auth:
-                    delete_last(ctx.guild, self.db)
+                    delete_own(ctx.guild, guild.lastedit, self.db)
                     guild.lastedit = (await ctx.channel.send(queue)).id
                     if not auth:
                         guild.lastcall = int(time.time())
@@ -76,7 +76,7 @@ class Lobby(commands.Cog):
         tl = (guild.lastcall + guild.cooldown) - int(time.time())
         if tl <= 0 or auth or guild.privcomms:
             if users:
-                queue = "```yaml\nCurrent Players:"
+                queue = "```yaml\nCurrent Active Users:"
                 i = 1
                 for u in sorted(users, key=lambda x: x.jointime_playing):
                     nick = ctx.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
@@ -85,9 +85,10 @@ class Lobby(commands.Cog):
                     i += 1
                 queue += "\n```"
             else:
-                queue = "```yaml\nNo one is playing right now\n```"
+                queue = "```yaml\nNo one is Active right now\n```"
                 if not guild.privcomms or auth:
-                    guild.lastedit = (await ctx.channel.send(queue)).id
+                    delete_own(ctx.guild, guild.lastplay, self.db)
+                    guild.lastplay = (await ctx.channel.send(queue)).id
                     if not auth:
                         guild.lastcall = int(time.time())
                 else:
@@ -138,6 +139,7 @@ class Lobby(commands.Cog):
         self.db.commit()
         if update:
             await update_last(member.guild, db=self.db)
+            await update_play(member.guild, db=self.db)
 
     async def update_last(self, guild_d, db) -> None:
         """Update last sent lobby message
@@ -168,20 +170,20 @@ class Lobby(commands.Cog):
             tl = 0
         if tl <= 0:
             if users:
-                queue = "```yaml\nCurrent Queue:"
+                queue = "```yaml\nCurrent Lobby:"
                 i = 1
                 for u in sorted(users, key=lambda x: x.jointime):
                     nick = msg.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
                     t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
                     queue += f"\n{i}: {nick}: {t}"
                     i += 1
-                queue += "\nThis message will be auto updated until ^queue is used again\n```"
+                queue += "\nThis message will be auto updated until ^lobby is used again\n```"
                 await msg.edit(content=queue)
             else:
-                await msg.edit(content="```yaml\nQueue is empty\n```")
-    
-    async def delete_last(self, guild_d, db) -> None:
-        """Delete last sent lobby message
+                await msg.edit(content="```yaml\nLobby is empty\n```")
+
+    async def update_play(self, guild_d, db) -> None:
+        """Update last sent lobby message
 
         Parameters
         ----------
@@ -192,18 +194,34 @@ class Lobby(commands.Cog):
         """
 
         guild = await checkGuild(guild_d, db=self.db)
-        users = [ u for u in guild.users if u.waiting == Status.waiting ]
+        users = [ u for u in guild.users if u.waiting == Status.playing ]
         msg = None
         for c in guild_d.text_channels: #This block could be cleaner?
             try:
-                msg = await c.fetch_message(guild.lastedit)
+                msg = await c.fetch_message(guild.lastplay)
             except:
                 pass
             if not msg is None:
                 break
         if msg is None:
             return
-        msg.delete()
+        try:
+            tl = (msg.edited_at.timestamp() + guild.cooldown + 1) - int(time.time())
+        except AttributeError: #Catch if message is uneditted
+            tl = 0
+        if tl <= 0:
+            if users:
+                queue = "```yaml\nCurrent Active Users:"
+                i = 1
+                for u in sorted(users, key=lambda x: x.jointime):
+                    nick = msg.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                    queue += f"\n{i}: {nick}: {t}"
+                    i += 1
+                queue += "\nThis message will be auto updated until ^active is used again\n```"
+                await msg.edit(content=queue)
+            else:
+                await msg.edit(content="```yaml\nNo one is Active right now\n```")
 
     async def update_users(self, guild) -> None:
         """Update user status in monitored channels
