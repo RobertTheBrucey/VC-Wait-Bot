@@ -21,6 +21,7 @@ class T_Bot(commands.Bot):
             Base.metadata.create_all(engine)
             self.db = Session()
         chans = [f"#{c.name}" for c in self.db.query(TwitchChannel).all()]
+        print(chans)
         chans += parser["twitch"]["initial_channels"].split(",")
         super().__init__(
             irc_token=parser["twitch"]["irc_token"],
