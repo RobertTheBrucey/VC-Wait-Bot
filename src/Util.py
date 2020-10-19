@@ -81,15 +81,17 @@ async def check_auth(ctx, bot):
     bot : commands.Bot
         Bot object to use to check for permissions
     """
-
     owner = (await bot.application_info()).owner
-    manrole = ctx.guild.get_role((await checkGuild(ctx.guild)).management_role)
+    try:
+        manrole = ctx.guild.get_role((await checkGuild(ctx.guild)).management_role)
+    except:
+        manrole = None
     allowed = ctx.message.author == owner or \
     ctx.message.author.guild_permissions.administrator or \
     (not manrole is None and manrole in ctx.message.author.roles)
     return allowed
 
-async def delete_own(self, guild_d, msg_id, db) -> None:
+async def delete_own(guild_d, msg_id, db) -> None:
     """Delete last sent lobby message
 
     Parameters
@@ -100,14 +102,14 @@ async def delete_own(self, guild_d, msg_id, db) -> None:
         SQLAlchemy database session to query
     """
 
-    guild = await checkGuild(guild_d, db=self.db)
+    guild = await checkGuild(guild_d, db=db)
     msg = None
     for c in guild_d.text_channels: #This block could be cleaner?
         try:
             msg = await c.fetch_message(msg_id)
         except:
             pass
-        if not msg is None:
+        if msg:
             break
     if msg is None:
         return

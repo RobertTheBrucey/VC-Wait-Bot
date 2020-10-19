@@ -23,15 +23,13 @@ class Lobby(commands.Cog):
         """
         
         self.bot = bot
-        self._last_member = None
         self.db = bot.db
     
     @commands.command(name='lobby', aliases=["waiting", "queue"], description="Show the queue of players in the waiting channel.",
-    help="Show the queue of players in the waiting channel.", brief="Show the queue")
-    async def queue(self, ctx):
+    help="Show the queue of players in the waiting channel.", brief="Show the queue", pass_context=True)
+    async def lobby(self, ctx):
         """Prints the current lobby with times users have been waiting
         """
-
         auth = await check_auth(ctx, self.bot)
         guild = await checkGuild(ctx.guild, db=self.db)
         users = [ u for u in guild.users if u.waiting == Status.waiting ]
@@ -53,7 +51,7 @@ class Lobby(commands.Cog):
             else:
                 queue = "```yaml\nLobby is empty\n```"
                 if not guild.privcomms or auth:
-                    delete_own(ctx.guild, guild.lastedit, self.db)
+                    await delete_own(ctx.guild, guild.lastedit, self.db)
                     guild.lastedit = (await ctx.channel.send(queue)).id
                     if not auth:
                         guild.lastcall = int(time.time())
@@ -93,7 +91,7 @@ class Lobby(commands.Cog):
             else:
                 queue = "```yaml\nNo one is Active right now\n```"
                 if not guild.privcomms or auth:
-                    delete_own(ctx.guild, guild.lastplay, self.db)
+                    await delete_own(ctx.guild, guild.lastplay, self.db)
                     guild.lastplay = (await ctx.channel.send(queue)).id
                     if not auth:
                         guild.lastcall = int(time.time())
@@ -270,3 +268,6 @@ class Lobby(commands.Cog):
         print(f"Updating user status's")
         for g in self.bot.guilds:
             await update_users(g)
+
+def setup(bot):
+    bot.add_cog(Lobby(bot))
