@@ -207,7 +207,7 @@ class Lobby(commands.Cog):
                 msg = await c.fetch_message(guild.lastplay)
             except:
                 pass
-            if not msg is None:
+            if msg:
                 break
         if msg is None:
             return
@@ -219,9 +219,9 @@ class Lobby(commands.Cog):
             if users:
                 queue = "```yaml\nCurrent Active Users:"
                 i = 1
-                for u in sorted(users, key=lambda x: x.jointime):
+                for u in sorted(users, key=lambda x: x.jointime_playing):
                     nick = msg.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
-                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime))
+                    t = datetime.timedelta(seconds=(int(time.time()) - u.jointime_playing))
                     queue += f"\n{i}: {nick}: {t}"
                     i += 1
                 queue += "\nThis message will be auto updated until ^active is used again\n```"
