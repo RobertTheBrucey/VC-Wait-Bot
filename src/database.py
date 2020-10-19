@@ -43,6 +43,10 @@ class Guild(Base):
     lastedit = Column(Integer, default=0)
     privcomms = Column(Boolean, default=False)
     lastplay = Column(Integer, default=0)
+    record_lobby_time = Column(Integer, default=0)
+    record_lobby_user = Column(Integer, default=0)
+    record_active_time = Column(Integer, default=0)
+    record_active_user = Column(Integer, default=0)
 
 class Status(enum.Enum):
     """
