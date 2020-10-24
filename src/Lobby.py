@@ -88,7 +88,7 @@ class Lobby(commands.Cog):
                     i += 1
                 if not guild.privcomms or auth:
                     queue += "\nThis message will be auto updated until ^lobby is used again\n```"
-                    guild.lastedit = (await ctx.channel.send(queue)).id
+                    guild.lastplay = (await ctx.channel.send(queue)).id
                 else:
                     queue +="\n```"
                     await ctx.author.send(queue)
