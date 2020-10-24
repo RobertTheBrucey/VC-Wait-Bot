@@ -27,6 +27,11 @@ class Admin(commands.Cog):
         self._last_member = None
         self.db = bot.db
 
+    @commands.command(name='getme', description="Sends the bot invite link",
+    help="Sends you an invite link for this bot", brief="Add this bot to your server!")
+    async def getme(self, ctx):
+        await ctx.author.send("https://discord.com/api/oauth2/authorize?client_id=765426185638903808&permissions=11264&scope=bot")
+
     @commands.command(name='privilegecommands', description="Toggle priviledge commands mode",
     help="Toggles whether unprivileged users can use queue and playing", brief="Toggle privileged commands")
     async def toggle_priv(self, ctx):
