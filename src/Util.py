@@ -2,6 +2,8 @@ import discord
 from database import Guild, User
 from sqlalchemy.orm.exc import NoResultFound
 
+ebc = 0x21dcfd
+
 async def get_user(user_id, db): #Add use if not in db
     """Retrieve User from the database, or create an entry for one
 

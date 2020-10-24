@@ -83,12 +83,10 @@ class Admin(commands.Cog):
     async def print_config(self, ctx):
         if (await check_auth(ctx, self.bot)):
             guild = await checkGuild(ctx.guild, db=self.db)
-            string = "```yaml\nServer: "
-            string += self.bot.get_guild(guild.id).name + "\n"
-            string += "Lobby Channel: " + ctx.guild.get_channel(guild.channel).name + "\n"
-            string += "Active Channel: " + ctx.guild.get_channel(guild.channel_playing).name + "\n"
-            string += "Grace Period: " + str(guild.grace) + " minutes\n"
-            string += "Cooldown Time: " + str(guild.cooldown) + " seconds\n"
-            string += "Management role: " + str(ctx.guild.get_role(guild.management_role)) + "\n"
-            string += "```"
-            await ctx.channel.send(string)
+            embed = discord.Embed(title="Server Configuration", description=self.bot.get_guild(guild.id).name, color=ebc)
+            embed.add_field(name="Lobby Channel", value=ctx.guild.get_channel(guild.channel).name)
+            embed.add_field(name="Active Channel", value=ctx.guild.get_channel(guild.channel_playing).name, inline)
+            embed.add_field(name="Grace Period", value=str(guild.grace) + " minutes")
+            embed.add_field(name="Cooldown Time", value=str(guild.cooldown) + " seconds")
+            embed.add_field(name="Management role", value=str(ctx.guild.get_role(guild.management_role)))
+            await ctx.channel.send(embed=embed)
