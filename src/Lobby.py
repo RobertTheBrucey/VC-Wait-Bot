@@ -94,7 +94,7 @@ class Lobby(commands.Cog):
                         queue += f"\n{i}: {nick}: {t}"
                         i += 1
                     if not guild.privcomms or auth:
-                        queue += "\nThis message will be auto updated until ^lobby is used again\n```"
+                        queue += "\nThis message will be auto updated until ^active is used again\n```"
                         await delete_own(ctx.guild, guild.lastplay, self.db)
                         guild.lastplay = (await ctx.channel.send(queue)).id
                     else:
@@ -191,7 +191,7 @@ class Lobby(commands.Cog):
             dur = user.leavetime - user.jointime
             if dur > guild.record_lobby_time:
                 guild.record_lobby_time = dur
-                #guild.record_lobby_user = [user]
+                guild.record_lobby_user = user
             if after.channel != p_chan:
                     user.waiting = Status.none
             user.guild = guild
@@ -201,7 +201,7 @@ class Lobby(commands.Cog):
             dur = user.leavetime_playing - user.jointime_playing
             if dur > guild.record_active_time:
                 guild.record_active_time = dur
-                #guild.record_active_user = [user]
+                guild.record_active_user = user
             if after.channel != chan:
                     user.waiting = Status.none
             user.guild = guild
