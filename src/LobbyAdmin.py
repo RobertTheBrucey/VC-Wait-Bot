@@ -100,6 +100,7 @@ class LobbyAdmin(commands.Cog):
                     guild.channel = opts[0].id
                     self.db.commit()
                     await ctx.channel.send(f"```yaml\nWait channel set to {c.name}\n```")
+                    await bot.get_cog("Lobby").update_last(guild, db=self.db)
                 elif len(opts) == 0:
                     await ctx.channel.send(f"```yaml\nNo channels match {arg}\n```")
                 else:
@@ -128,6 +129,7 @@ class LobbyAdmin(commands.Cog):
                     guild.channel_playing = c.id 
                     self.db.commit()
                     await ctx.channel.send(f"```yaml\nActive channel set to {c.name}\n```")
+                    await bot.get_cog("Lobby").update_play(guild, db=self.db)
                 elif len(opts) == 0:
                     await ctx.channel.send(f"```yaml\nNo channels match {arg}\n```")
                 else:
