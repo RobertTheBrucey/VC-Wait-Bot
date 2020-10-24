@@ -337,6 +337,7 @@ class Lobby(commands.Cog):
     
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
+        print(f"Joined new guild: {guild}")
         await self.update_users(guild)
 
 def setup(bot):
