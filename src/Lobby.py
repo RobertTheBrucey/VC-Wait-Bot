@@ -192,7 +192,7 @@ class Lobby(commands.Cog):
             dur = user.leavetime - user.jointime
             if dur > guild.record_lobby_time:
                 guild.record_lobby_time = dur
-                #guild.record_lobby_user = [user]
+                guild.record_lobby_user = [user]
             if after.channel != p_chan:
                     user.waiting = Status.none
             user.guild = guild
@@ -202,7 +202,7 @@ class Lobby(commands.Cog):
             dur = user.leavetime_playing - user.jointime_playing
             if dur > guild.record_active_time:
                 guild.record_active_time = dur
-                #guild.record_active_user = [user]
+                guild.record_active_user = [user]
             if after.channel != chan:
                     user.waiting = Status.none
             user.guild = guild
