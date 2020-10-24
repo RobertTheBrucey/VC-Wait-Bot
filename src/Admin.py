@@ -32,7 +32,7 @@ class Admin(commands.Cog):
     async def getme(self, ctx):
         await ctx.author.send("```yaml\nClick this to add me to your server!\nhttps://discord.com/api/oauth2/authorize?client_id=765426185638903808&permissions=11264&scope=bot\n```")
 
-    @commands.command(name='privilegecommands', description="Toggle priviledge commands mode",
+    @commands.command(name='restrictcommands', aliases=["privilegecommands"], description="Toggle priviledge commands mode",
     help="Toggles whether unprivileged users can use queue and playing", brief="Toggle privileged commands")
     async def toggle_priv(self, ctx):
         if await check_auth(ctx, self.bot):
