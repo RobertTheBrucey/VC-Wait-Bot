@@ -44,9 +44,9 @@ class Guild(Base):
     privcomms = Column(Boolean, default=False)
     lastplay = Column(Integer, default=0)
     record_lobby_time = Column(Integer, default=0)
-    record_lobby_user = relationship("User", uselist=False, back_populates="record_lobby_servers")
+    record_lobby_user = relationship("User", back_populates="record_lobby_servers")
     record_active_time = Column(Integer, default=0)
-    record_active_user = relationship("User", uselist=False, back_populates="record_active_servers")
+    record_active_user = relationship("User", back_populates="record_active_servers")
 
 class Status(enum.Enum):
     """

@@ -114,7 +114,7 @@ class Lobby(commands.Cog):
         auth = await check_auth(ctx, self.bot)
         guild = await checkGuild(ctx.guild, db=self.db)
         if guild.record_active_time:
-            nick = ctx.guild.get_member(guild.record_active_user.id).display_name
+            nick = ctx.guild.get_member(guild.record_active_user[0].id).display_name
             t = datetime.timedelta(seconds=guild.record_active_time)
             msg = f"```yaml\nThe current active time record holder is {nick} with a time of {t}\n```"
             if auth or not guild.privcomms:
@@ -135,7 +135,7 @@ class Lobby(commands.Cog):
         auth = await check_auth(ctx, self.bot)
         guild = await checkGuild(ctx.guild, db=self.db)
         if guild.record_lobby_time:
-            nick = ctx.guild.get_member(guild.record_lobby_user.id).display_name
+            nick = ctx.guild.get_member(guild.record_lobby_user[0].id).display_name
             t = datetime.timedelta(seconds=guild.record_lobby_time)
             msg = f"```yaml\nThe current lobby time record holder is {nick} with a time of {t}\n```"
             if auth or not guild.privcomms:
@@ -175,7 +175,7 @@ class Lobby(commands.Cog):
             dur = user.leavetime - user.jointime
             if dur > guild.record_lobby_time:
                 guild.record_lobby_time = dur
-                guild.record_lobby_user = user
+                guild.record_lobby_user = [user]
             if after.channel != p_chan:
                     user.waiting = Status.none
             user.guild = guild
@@ -185,7 +185,7 @@ class Lobby(commands.Cog):
             dur = user.leavetime_playing - user.jointime_playing
             if dur > guild.record_active_time:
                 guild.record_active_time = dur
-                guild.record_active_user = user
+                guild.record_active_user = [user]
             if after.channel != chan:
                     user.waiting = Status.none
             user.guild = guild
