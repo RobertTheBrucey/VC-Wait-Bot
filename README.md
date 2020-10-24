@@ -1,13 +1,13 @@
 # VC-Wait-Bot
 
-To Do:
-* Reset wait times
-* Need to handle the case of being added to a server while people are in the VC or when config changes
+## To Do:
 * Get front of the queue
 * Have bot move front of queue from waitroom to playing
-* Delete user's command text if bot has perms and user is unprivileged
+* Handle the case of lobby channel and active channel being the same
+* Manage role is broken
+* update_users in Lobby.py is broken
 
-Done:
+## Done:
 * Log when user joins VC
 * Log when user leaves VC
 * Print ordered list when asked
@@ -21,3 +21,37 @@ Done:
 * Longer term options
     * Play room
     * Time played
+* Delete user's command text if bot has perms and user is unprivileged
+* Reset wait times
+* Need to handle the case of being added to a server while people are in the VC or when config changes
+
+## Commands layout:
+* Lobby
+    * lobby
+        * waiting
+        * queue
+    * active
+        * playing
+
+* Lobby Admin
+    * grace
+    * activechannel
+        * playactive
+    * lobbychannel
+        * waitchannel
+        * queuechannel
+    * resetactive
+        * resetplaying
+    * resetlobby
+        * resetwaiting
+        * resetqueue
+* Admin
+    * config
+    * cooldown
+    * managerole
+    * privilegecommands
+* Twitch
+    * addtwitch
+    * removetwitch
+    * showtwitch
+

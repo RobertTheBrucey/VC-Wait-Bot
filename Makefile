@@ -12,6 +12,9 @@ run:
 stop:
 	docker stop $(APP)
 
+start:
+	docker start $(APP)
+
 logs:
 	docker logs -f $(APP)
 
