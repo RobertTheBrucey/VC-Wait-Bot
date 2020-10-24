@@ -4,6 +4,8 @@
 * Get front of the queue
 * Have bot move front of queue from waitroom to playing
 * Handle the case of lobby channel and active channel being the same
+* Manage role is broken
+* update_users in Lobby.py is broken
 
 ## Done:
 * Log when user joins VC
