@@ -44,9 +44,11 @@ class Guild(Base):
     privcomms = Column(Boolean, default=False)
     lastplay = Column(Integer, default=0)
     record_lobby_time = Column(Integer, default=0)
-    record_lobby_user = relationship("User", back_populates="record_lobby_servers")
+    #record_lobby_user_id = Column(Integer, ForeignKey('users.id'))
+    record_lobby_user = relationship("User")
     record_active_time = Column(Integer, default=0)
-    record_active_user = relationship("User", back_populates="record_active_servers")
+    #record_active_user_id = Column(Integer, ForeignKey('users.id'))
+    record_active_user = relationship("User")
 
 class Status(enum.Enum):
     """
@@ -92,8 +94,6 @@ class User(Base):
     jointime_playing = Column(Integer, default=0, nullable=False)
     leavetime_playing = Column(Integer, default=0, nullable=False)
     waiting = Column(Enum(Status), default=Status.none)
-    record_lobby_servers = relationship("Guild", back_populates="record_lobby_user")
-    record_active_servers = relationship("Guild", back_populates="record_active_user")
 Guild.users = relationship("User", order_by=User.jointime, back_populates="guild")
 
 class RoleType(enum.Enum):
