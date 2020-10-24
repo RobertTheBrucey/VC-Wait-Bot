@@ -5,7 +5,8 @@
 * Have bot move front of queue from waitroom to playing
 * Handle the case of lobby channel and active channel being the same
 * Manage role is broken
-* update_users in Lobby.py is broken
+* people in channel when bot is added are not added to current queue
+* jointime = 0 bug still exists
 
 ## Done:
 * Log when user joins VC
