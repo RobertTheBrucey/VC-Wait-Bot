@@ -50,6 +50,10 @@ class Lobby(commands.Cog):
                 else:
                     queue +="\n```"
                     await ctx.author.send(queue)
+                    try:
+                        await ctx.message.delete()
+                    except:
+                        pass
             else:
                 queue = "```yaml\nLobby is empty\n```"
                 if not guild.privcomms or auth:
@@ -92,6 +96,10 @@ class Lobby(commands.Cog):
                 else:
                     queue +="\n```"
                     await ctx.author.send(queue)
+                    try:
+                        await ctx.message.delete()
+                    except:
+                        pass
             else:
                 queue = "```yaml\nNo one is Active right now\n```"
                 if not guild.privcomms or auth:
