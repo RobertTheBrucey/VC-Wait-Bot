@@ -90,7 +90,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     guild_id = Column(Integer, ForeignKey('guilds.id'))
-    guild = relationship("Guild", back_populates="users", primaryjoin="User.guild_id==Guild.id")
+    guild = relationship("Guild", back_populates="users", primaryjoin="User.guild_id==Guild.id", post_update=True)
     jointime = Column(Integer, default=0, nullable=False)
     leavetime = Column(Integer, default=0, nullable=False)
     jointime_playing = Column(Integer, default=0, nullable=False)
