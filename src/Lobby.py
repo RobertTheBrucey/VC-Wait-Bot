@@ -334,6 +334,10 @@ class Lobby(commands.Cog):
         print(f"Updating user status's")
         for g in self.bot.guilds:
             await self.update_users(g)
+    
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        await self.update_users(guild)
 
 def setup(bot):
     bot.add_cog(Lobby(bot))
