@@ -48,34 +48,40 @@ class Admin(commands.Cog):
     help="Set the cooldown of the queue command", brief="Change cooldown time")
     async def set_cooldown(self, ctx, arg):
         if (await check_auth(ctx, self.bot)):
-            if arg.isdigit():
-                guild = await checkGuild(ctx.guild, db=self.db)
-                guild.cooldown = int(arg)
-                self.db.commit()
-                await ctx.channel.send(f"```yaml\nCooldown time changed to {arg} seconds\n```")
+            if arg:
+                if arg.isdigit():
+                    guild = await checkGuild(ctx.guild, db=self.db)
+                    guild.cooldown = int(arg)
+                    self.db.commit()
+                    await ctx.channel.send(f"```yaml\nCooldown time changed to {arg} seconds\n```")
+                else:
+                    await ctx.channel.send("```yaml\nError: Expected an integer for cooldown time\n```")
             else:
-                await ctx.channel.send("```yaml\nError: Expected an integer for cooldown time\n```")
+                await ctx.channel.send(f"```yaml\nCooldown is currently {guild.cooldown} seconds\n```")
 
     @commands.command(name='managerole', description="(Optional) Set a role to manage this bot",
     help="Set the role to manage this bot in additional to administrators", brief="Set bot controller role")
     async def managerole(self, ctx, arg):
         if (await check_auth(ctx, self.bot)):
-            opts = [c for c in ctx.guild.roles if arg in c.name.lower()]
-            for c in ctx.guild.roles:
-                if arg == c.name.lower():
-                    opts = [c]
-            if len(opts) == 1:
-                guild = await checkGuild(ctx.guild, db=self.db)
-                guild.management_role = opts[0].id
-                db.commit()
-                await ctx.channel.send(f"```yaml\nManagement role set to {c.name} \n```")
-            elif len(opts) == 0:
-                await ctx.channel.send(f"```yaml\nNo roles match {arg}\n```")
+            if arg:
+                opts = [c for c in ctx.guild.roles if arg in c.name.lower()]
+                for c in ctx.guild.roles:
+                    if arg == c.name.lower():
+                        opts = [c]
+                if len(opts) == 1:
+                    guild = await checkGuild(ctx.guild, db=self.db)
+                    guild.management_role = opts[0].id
+                    db.commit()
+                    await ctx.channel.send(f"```yaml\nManagement role set to {c.name} \n```")
+                elif len(opts) == 0:
+                    await ctx.channel.send(f"```yaml\nNo roles match {arg}\n```")
+                else:
+                    chans = ""
+                    for c in opts:
+                        chans += c.name + "\n"
+                    await ctx.channel.send(f"```yaml\nToo many matches, please be more specific.\n{chans}\n```")
             else:
-                chans = ""
-                for c in opts:
-                    chans += c.name + "\n"
-                await ctx.channel.send(f"```yaml\nToo many matches, please be more specific.\n{chans}\n```")
+                await ctx.channel.send(f"```yaml\nCurrent Management role is {ctx.guild.get_role(guild.management_role)}\n```")
 
     #Should change this to work better with cogs
     @commands.command(name='config', description="Show the current configuration",
