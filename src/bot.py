@@ -23,6 +23,8 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
     await bot.change_presence(activity=discord.Activity(name="^help", type=discord.ActivityType.listening))
     print(f"Currently in {len(bot.guilds)} guilds")
+    for g in bot.guilds:
+        print(g)
     await bot.get_cog("Twitch").t_bot.start()
 
 if __name__ == "__main__":
