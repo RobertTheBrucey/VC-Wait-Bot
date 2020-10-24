@@ -1,3 +1,4 @@
+aiohttp<3.7.0
 discord
 SQLAlchemy
 twitchio
