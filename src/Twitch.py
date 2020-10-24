@@ -43,7 +43,7 @@ class Twitch(commands.Cog):
                 if await self.t_bot.add_channel(chan):
                     await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse {self.t_bot.prefix}verifyqueue in Twitch chat to complete the connection\n```")
                 else:
-                    await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
+                    await ctx.send(f"```yaml\nCould not find Twitch channel {name}\n```")
             elif chan.verified: #Someone has already linked this Twitch channel
                 await ctx.send(f"```yaml\nTwitch channel {name} has already been linked, use {self.t_bot.prefix}leavequeue in Twitch chat to remove existing connection\n```")
             else: #Twitch linked but not verified, reset the linking process
@@ -51,7 +51,7 @@ class Twitch(commands.Cog):
                 if await self.t_bot.add_channel(chan):
                     await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse {self.t_bot.prefix}verifyqueue in Twitch chat to complete the connection\n```")
                 else:
-                    await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
+                    await ctx.send(f"```yaml\nCould not find Twitch channel {name}\n```")
             self.db.commit()
 
     @commands.command(name='removetwitch', description="Remove a connected Twitch channel",
@@ -64,11 +64,11 @@ class Twitch(commands.Cog):
                 name = name[1:]
             chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==name).one_or_none()
             if chan is None:
-                await ctx.send(f"```yaml\nCould not find Twitch channel {name}")
+                await ctx.send(f"```yaml\nCould not find Twitch channel {name}\n```")
             else:
                 if chan.guild == guild:
                     await self.t_bot.del_channel(chan)
-                    db.delete(chan)
+                    self.db.delete(chan)
                     await ctx.channel.send(f"```yaml\nTwitch channel {name} has been removed\n```")
                 else:
                     await ctx.channel.send(f"```yaml\nTwitch channel {name} is not linked to this server. Naughty!\n```")
@@ -78,7 +78,7 @@ class Twitch(commands.Cog):
     help=f"Show connected Twitch channels", brief="Show connected Twitch channels")
     async def show_twitch(self, ctx):
         if await check_auth(ctx, self.bot):
-            guild = await checkGuild(ctx.guild, db=db)
+            guild = await checkGuild(ctx.guild, db=self.db)
             string = "```yaml\nLinked twitch channels:\n"
             verimsg = False
             if guild.twitch:

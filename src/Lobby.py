@@ -105,6 +105,48 @@ class Lobby(commands.Cog):
         else:
             await ctx.channel.send(f"```yaml\nCommand on cooldown, please wait {tl} seconds.\n```")
 
+    @commands.command(name='activerecord', aliases=["playingrecord"], description="Show the record longest active time.",
+    help="Show the record longest active user.", brief="Show the active record")
+    async def playingrecord(self, ctx):
+        """Shows the current active time record holder
+        """
+
+        auth = await check_auth(ctx, self.bot)
+        guild = await checkGuild(ctx.guild, db=self.db)
+        if guild.record_active_time:
+            nick = ctx.guild.get_member(guild.record_active_user.id).display_name
+            t = datetime.timedelta(seconds=guild.record_active_time)
+            msg = f"```yaml\nThe current active time record holder is {nick} with a time of {t}\n```"
+            if auth or not guild.privcomms:
+                await ctx.channel.send(msg)
+            else:
+                await ctx.author.send(msg)
+                try:
+                    await ctx.message.delete()
+                except:
+                    pass
+
+    @commands.command(name='lobbyrecord', aliases=["queuerecord","waitingrecord"], description="Show the record longest lobby time.",
+    help="Show the record longest lobby user.", brief="Show the lobby record")
+    async def lobbyrecord(self, ctx):
+        """Shows the current lobby time record holder
+        """
+
+        auth = await check_auth(ctx, self.bot)
+        guild = await checkGuild(ctx.guild, db=self.db)
+        if guild.record_lobby_time:
+            nick = ctx.guild.get_member(guild.record_lobby_user.id).display_name
+            t = datetime.timedelta(seconds=guild.record_lobby_time)
+            msg = f"```yaml\nThe current lobby time record holder is {nick} with a time of {t}\n```"
+            if auth or not guild.privcomms:
+                await ctx.channel.send(msg)
+            else:
+                await ctx.author.send(msg)
+                try:
+                    await ctx.message.delete()
+                except:
+                    pass
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         """Update database on voice chat change
@@ -130,22 +172,30 @@ class Lobby(commands.Cog):
             update = True
         if before.channel == chan and after.channel != chan: #Left waiting
             user.leavetime = int(time.time())
+            dur = user.leavetime - user.jointime
+            if dur > guild.record_lobby_time:
+                guild.record_lobby_time = dur
+                guild.record_lobby_user = user
             if after.channel != p_chan:
                     user.waiting = Status.none
             user.guild = guild
             update = True
         elif before.channel == p_chan and after.channel != p_chan: #Left playing
             user.leavetime_playing = int(time.time())
+            dur = user.leavetime_playing - user.jointime_playing
+            if dur > guild.record_active_time:
+                guild.record_active_time = dur
+                guild.record_active_user = user
             if after.channel != chan:
                     user.waiting = Status.none
             user.guild = guild
             update = True
         self.db.commit()
         if update:
-            await update_last(member.guild, db=self.db)
-            await update_play(member.guild, db=self.db)
+            await self.update_last(member.guild, db=self.db)
+            await self.update_play(member.guild, db=self.db)
 
-    async def update_last(self, guild_d, db) -> None:
+    async def update_last(self, guild_d, db):
         """Update last sent lobby message
 
         Parameters
@@ -186,7 +236,7 @@ class Lobby(commands.Cog):
             else:
                 await msg.edit(content="```yaml\nLobby is empty\n```")
 
-    async def update_play(self, guild_d, db) -> None:
+    async def update_play(self, guild_d, db):
         """Update last sent lobby message
 
         Parameters
@@ -227,19 +277,19 @@ class Lobby(commands.Cog):
             else:
                 await msg.edit(content="```yaml\nNo one is Active right now\n```")
 
-    async def update_users(self, guild) -> None:
+    async def update_users(self, guild):
         """Update user status in monitored channels
-
+        
         Parameters
         ----------
         guild : discord.Guild
             Discord Guild to update users for
         """
-
+        
         guild_db = await checkGuild(guild, db=self.db)
         members = guild.get_channel(guild_db.channel).voice_states #Wait channel
         members_p = guild.get_channel(guild_db.channel_playing).voice_states #Play channel
-
+        
         for user in guild_db.users: #Remove users not in VC
             u = user.id
             if u not in {**members, **members_p}:
@@ -247,27 +297,26 @@ class Lobby(commands.Cog):
                 user.guild = guild_db
                 user.waiting = Status.none
         for user in members: #Add users in waiting
-            u = await get_user(user) #get User from DB
+            u = await get_user(user, self.db) #get User from DB
             if u not in guild_db.users:
                 u.guild = guild_db
                 u.waiting = Status.waiting
                 if (int(time.time()) - u.leavetime) > (guild_db.grace * 60): #Grace period handling
                     u.jointime = int(time.time())
         for user in members_p: #Add users in playing
-            u = await get_user(user) #get User from DB
+            u = await get_user(user, self.db) #get User from DB
             if u not in guild_db.users:
                 u.guild = guild_db
                 u.waiting = Status.playing
                 if (int(time.time()) - u.leavetime_playing) > (guild_db.grace * 60): #Grace period handling
                     u.jointime_playing = int(time.time())
         self.db.commit()
-        
-    #@bot.event
+
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"Updating user status's")
         for g in self.bot.guilds:
-            await update_users(g)
+            await self.update_users(g)
 
 def setup(bot):
     bot.add_cog(Lobby(bot))

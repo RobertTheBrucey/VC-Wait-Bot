@@ -35,9 +35,9 @@ class Admin(commands.Cog):
             guild.privcomms = not guild.privcomms
             self.db.commit()
             if guild.privcomms:
-                await ctx.channel.send("```yaml\nqueue and playing commands now DM unprivileged users\n```")
+                await ctx.channel.send("```yaml\nRegular commands now DM unprivileged users\n```")
             else:
-                await ctx.channel.send("```yaml\nqueue and playing commands can now be used by all users\n```")
+                await ctx.channel.send("```yaml\nRegular commands can now be used by all users\n```")
 
     @commands.command(name='cooldown', description="Set the cooldown of the queue command",
     help="Set the cooldown of the queue command", brief="Change cooldown time")
@@ -79,9 +79,9 @@ class Admin(commands.Cog):
         if (await check_auth(ctx, self.bot)):
             guild = await checkGuild(ctx.guild, db=self.db)
             string = "```yaml\nServer: "
-            string += bot.get_guild(guild.id).name + "\n"
-            string += "Wait Channel: " + ctx.guild.get_channel(guild.channel).name + "\n"
-            string += "Play Channel: " + ctx.guild.get_channel(guild.channel_playing).name + "\n"
+            string += self.bot.get_guild(guild.id).name + "\n"
+            string += "Lobby Channel: " + ctx.guild.get_channel(guild.channel).name + "\n"
+            string += "Active Channel: " + ctx.guild.get_channel(guild.channel_playing).name + "\n"
             string += "Grace Period: " + str(guild.grace) + " minutes\n"
             string += "Cooldown Time: " + str(guild.cooldown) + " seconds\n"
             string += "Management role: " + str(ctx.guild.get_role(guild.management_role)) + "\n"

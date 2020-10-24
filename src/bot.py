@@ -22,7 +22,7 @@ async def on_ready():
     # When connected, change presence and start twitch bot
     print(f"Logged in as {bot.user}")
     await bot.change_presence(activity=discord.Activity(name="^help", type=discord.ActivityType.listening))
-    #await bot.get_cog("Twitch").t_bot.start()
+    await bot.get_cog("Twitch").t_bot.start()
 
 if __name__ == "__main__":
     #Start DataBase engine

@@ -29,6 +29,7 @@ class T_Bot(commands.Bot):
             prefix=parser["twitch"]["prefix"],
             initial_channels=chans #Change to read in from db
             )
+        print("Twitch Bot initialised")
         
 
     async def event_ready(self):
@@ -61,7 +62,10 @@ class T_Bot(commands.Bot):
         return success
 
     async def del_channel(self, chan):
-        await self.part_channels([chan.name])
+        try:
+            await self.part_channels([chan.name])
+        except:
+            pass
     
     @commands.command(name="verifyqueue")
     async def verify(self, ctx):

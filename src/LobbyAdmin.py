@@ -41,8 +41,8 @@ class LobbyAdmin(commands.Cog):
             for u in guild.users:
                 u.jointime = ct
                 u.leavetime = 0
-            db.commit()
-            await ctx.channel.send("```yaml\nAll queue times have been reset\n```")
+            self.db.commit()
+            await ctx.channel.send("```yaml\nAll lobby times have been reset\n```")
 
     @commands.command(name='resetactive', aliases=["resetplaying"], description="Reset the times for all users",
     help="Resets all playing times.", brief="Reset play times")
@@ -56,8 +56,8 @@ class LobbyAdmin(commands.Cog):
             for u in guild.users:
                 u.jointime_playing = ct
                 u.leavetime_playing = 0
-            db.commit()
-            await ctx.channel.send("```yaml\nAll playing times have been reset\n```")
+            self.db.commit()
+            await ctx.channel.send("```yaml\nAll active dtimes have been reset\n```")
 
     @commands.command(name='lobbychannel', aliases=["waitchannel", "queuechannel"], description="Set the channel to monitor for waiting users",
     help="Change the channel to monitor for waiting users", brief="Change wait channel")
@@ -73,7 +73,7 @@ class LobbyAdmin(commands.Cog):
             if len(opts) == 1:
                 guild = await checkGuild(ctx.guild, db=self.db)
                 guild.channel = opts[0].id
-                db.commit()
+                self.db.commit()
                 await ctx.channel.send(f"```yaml\nWait channel set to {c.name}\n```")
             elif len(opts) == 0:
                 await ctx.channel.send(f"```yaml\nNo channels match {arg}\n```")
@@ -83,7 +83,7 @@ class LobbyAdmin(commands.Cog):
                     chans += c.name + "\n"
                 await ctx.channel.send(f"```yaml\nToo many matches, please be more specific.\n{chans}```")
 
-    @commands.command(name='playchannel', description="Set the channel to monitor for playing users",
+    @commands.command(name='activechannel', aliases=["playchannel"] ,description="Set the channel to monitor for playing users",
     help="Change the channel to monitor for playing users", brief="Change play channel")
     async def playchannel(self, ctx, arg):
         """Set's the active channel
@@ -94,11 +94,12 @@ class LobbyAdmin(commands.Cog):
             for c in opts:
                 if arg == c.name.lower():
                     opts = [c]
+                    break
             if len(opts) == 1:
                 guild = await checkGuild(ctx.guild, db=self.db)
                 guild.channel_playing = c.id 
-                db.commit()
-                await ctx.channel.send(f"```yaml\nWait channel set to {c.name}\n```")
+                self.db.commit()
+                await ctx.channel.send(f"```yaml\nActive channel set to {c.name}\n```")
             elif len(opts) == 0:
                 await ctx.channel.send(f"```yaml\nNo channels match {arg}\n```")
             else:
@@ -117,7 +118,7 @@ class LobbyAdmin(commands.Cog):
             if arg.isdigit():
                 guild = await checkGuild(ctx.guild, db=self.db)
                 guild.grace = int(arg)
-                db.commit()
+                self.db.commit()
                 await ctx.channel.send(f"```yaml\nGrace period changed to {arg} minutes\n```")
             else:
                 await ctx.channel.send("```yaml\nError: Expected an integer for grace period\n```")

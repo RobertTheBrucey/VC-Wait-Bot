@@ -2,7 +2,7 @@ import discord
 from database import Guild, User
 from sqlalchemy.orm.exc import NoResultFound
 
-async def get_user(user_id: int, db) -> User: #Add use if not in db
+async def get_user(user_id, db): #Add use if not in db
     """Retrieve User from the database, or create an entry for one
 
     Parameters
@@ -14,7 +14,7 @@ async def get_user(user_id: int, db) -> User: #Add use if not in db
     """
 
     user = db.query(User).filter(User.id==user_id).one_or_none() #Get the matching record
-    if User is None: #If no User is found, create one
+    if user is None: #If no User is found, create one
         user = User(id=user_id)
         db.add(user)
         db.commit()
@@ -113,4 +113,4 @@ async def delete_own(guild_d, msg_id, db) -> None:
             break
     if msg is None:
         return
-    msg.delete()
+    await msg.delete()
