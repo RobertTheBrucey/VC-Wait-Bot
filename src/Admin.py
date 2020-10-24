@@ -48,13 +48,14 @@ class Admin(commands.Cog):
     help="Set the cooldown of the queue command", brief="Change cooldown time")
     async def set_cooldown(self, ctx, arg):
         if (await check_auth(ctx, self.bot)):
-            if arg.isdigit():
-                guild = await checkGuild(ctx.guild, db=self.db)
-                guild.cooldown = int(arg)
-                self.db.commit()
-                await ctx.channel.send(f"```yaml\nCooldown time changed to {arg} seconds\n```")
-            else:
-                await ctx.channel.send("```yaml\nError: Expected an integer for cooldown time\n```")
+            if arg:
+                if arg.isdigit():
+                    guild = await checkGuild(ctx.guild, db=self.db)
+                    guild.cooldown = int(arg)
+                    self.db.commit()
+                    await ctx.channel.send(f"```yaml\nCooldown time changed to {arg} seconds\n```")
+                else:
+                    await ctx.channel.send("```yaml\nError: Expected an integer for cooldown time\n```")
 
     @commands.command(name='managerole', description="(Optional) Set a role to manage this bot",
     help="Set the role to manage this bot in additional to administrators", brief="Set bot controller role")
