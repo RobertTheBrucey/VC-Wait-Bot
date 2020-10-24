@@ -66,13 +66,13 @@ class LobbyAdmin(commands.Cog):
         """
 
         if (await check_auth(ctx, self.bot)):
+            guild = await checkGuild(ctx.guild, db=self.db)
             if arg:
                 opts = [c for c in ctx.guild.voice_channels if arg in c.name.lower()]
                 for c in opts:
                     if arg == c.name.lower():
                         opts = [c]
                 if len(opts) == 1:
-                    guild = await checkGuild(ctx.guild, db=self.db)
                     guild.channel = opts[0].id
                     self.db.commit()
                     await ctx.channel.send(f"```yaml\nWait channel set to {c.name}\n```")
@@ -93,6 +93,7 @@ class LobbyAdmin(commands.Cog):
         """
 
         if (await check_auth(ctx, self.bot)):
+            guild = await checkGuild(ctx.guild, db=self.db)
             if arg:
                 opts = [c for c in ctx.guild.voice_channels if arg in c.name.lower()]
                 for c in opts:
@@ -100,7 +101,6 @@ class LobbyAdmin(commands.Cog):
                         opts = [c]
                         break
                 if len(opts) == 1:
-                    guild = await checkGuild(ctx.guild, db=self.db)
                     guild.channel_playing = c.id 
                     self.db.commit()
                     await ctx.channel.send(f"```yaml\nActive channel set to {c.name}\n```")
@@ -116,14 +116,14 @@ class LobbyAdmin(commands.Cog):
 
     @commands.command(name='grace', description="Set the grace period in the case of temporary disconnections",
     help="Set the grace period for disconnections", brief="Change DC grace period")
-    async def grace(self, ctx, arg):
+    async def grace(self, ctx, arg=None):
         """Set's the grace period for leaving VC
         """
 
         if (await check_auth(ctx, self.bot)):
+            guild = await checkGuild(ctx.guild, db=self.db)
             if arg:
                 if arg.isdigit():
-                    guild = await checkGuild(ctx.guild, db=self.db)
                     guild.grace = int(arg)
                     self.db.commit()
                     await ctx.channel.send(f"```yaml\nGrace period changed to {arg} minutes\n```")

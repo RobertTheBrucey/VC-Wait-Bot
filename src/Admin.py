@@ -46,11 +46,12 @@ class Admin(commands.Cog):
 
     @commands.command(name='cooldown', description="Set the cooldown of the queue command",
     help="Set the cooldown of the queue command", brief="Change cooldown time")
-    async def set_cooldown(self, ctx, arg):
+    async def set_cooldown(self, ctx, arg=None):
         if (await check_auth(ctx, self.bot)):
-            if arg:
+            print(f"Arg is {arg}")
+            guild = await checkGuild(ctx.guild, db=self.db)
+            if not arg is None:
                 if arg.isdigit():
-                    guild = await checkGuild(ctx.guild, db=self.db)
                     guild.cooldown = int(arg)
                     self.db.commit()
                     await ctx.channel.send(f"```yaml\nCooldown time changed to {arg} seconds\n```")
@@ -61,15 +62,15 @@ class Admin(commands.Cog):
 
     @commands.command(name='managerole', description="(Optional) Set a role to manage this bot",
     help="Set the role to manage this bot in additional to administrators", brief="Set bot controller role")
-    async def managerole(self, ctx, arg):
+    async def managerole(self, ctx, arg=None):
         if (await check_auth(ctx, self.bot)):
+            guild = await checkGuild(ctx.guild, db=self.db)
             if arg:
                 opts = [c for c in ctx.guild.roles if arg in c.name.lower()]
                 for c in ctx.guild.roles:
                     if arg == c.name.lower():
                         opts = [c]
                 if len(opts) == 1:
-                    guild = await checkGuild(ctx.guild, db=self.db)
                     guild.management_role = opts[0].id
                     db.commit()
                     await ctx.channel.send(f"```yaml\nManagement role set to {c.name} \n```")
