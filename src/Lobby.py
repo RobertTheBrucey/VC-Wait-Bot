@@ -46,6 +46,7 @@ class Lobby(commands.Cog):
                     i += 1
                 if not guild.privcomms or auth:
                     queue += "\nThis message will be auto updated until ^lobby is used again\n```"
+                    await delete_own(ctx.guild, guild.lastedit, self.db)
                     guild.lastedit = (await ctx.channel.send(queue)).id
                 else:
                     queue +="\n```"
@@ -92,6 +93,7 @@ class Lobby(commands.Cog):
                     i += 1
                 if not guild.privcomms or auth:
                     queue += "\nThis message will be auto updated until ^lobby is used again\n```"
+                    await delete_own(ctx.guild, guild.lastplay, self.db)
                     guild.lastplay = (await ctx.channel.send(queue)).id
                 else:
                     queue +="\n```"
