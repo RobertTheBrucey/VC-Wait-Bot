@@ -328,6 +328,8 @@ class Lobby(commands.Cog):
                 if (int(time.time()) - u.leavetime_playing) > (guild_db.grace * 60): #Grace period handling
                     u.jointime_playing = int(time.time())
         self.db.commit()
+        await self.update_last(guild, db=self.db)
+        await self.update_play(guild, db=self.db)
 
     @commands.Cog.listener()
     async def on_ready(self):
