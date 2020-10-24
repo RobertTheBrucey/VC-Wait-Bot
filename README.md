@@ -5,8 +5,8 @@
 * Have bot move front of queue from waitroom to playing
 * Handle the case of lobby channel and active channel being the same
 * Manage role is broken
-* people in channel when bot is added are not added to current queue
-* jointime = 0 bug still exists
+* jointime = 0 bug still exists - Might be fixed now
+* Cause of all users being removed from lobby/active channels may still exist, may be linked to record time tracking
 
 ## Done:
 * Log when user joins VC

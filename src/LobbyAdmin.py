@@ -43,6 +43,18 @@ class LobbyAdmin(commands.Cog):
                 u.leavetime = 0
             self.db.commit()
             await ctx.channel.send("```yaml\nAll lobby times have been reset\n```")
+    
+    @commands.command(name='resetlobbyrecord', aliases=["resetwaitingrecord","resetqueuerecord"], description="Reset the record lobby time",
+    help="Resets lobby record time.", brief="Reset lobby record")
+    async def resetqueuerecord(self, ctx):
+        """Resets all the lobby waiting times
+        """
+
+        if await check_auth(ctx, self.bot):
+            guild = await checkGuild(ctx.guild, db=self.db)
+            guild.record_lobby_time = 0
+            self.db.commit()
+            await ctx.channel.send("```yaml\nLobby record time has been reset\n```")
 
     @commands.command(name='resetactive', aliases=["resetplaying"], description="Reset the times for all users",
     help="Resets all playing times.", brief="Reset play times")
@@ -57,7 +69,19 @@ class LobbyAdmin(commands.Cog):
                 u.jointime_playing = ct
                 u.leavetime_playing = 0
             self.db.commit()
-            await ctx.channel.send("```yaml\nAll active dtimes have been reset\n```")
+            await ctx.channel.send("```yaml\nAll active times have been reset\n```")
+    
+    @commands.command(name='resetactiverecord', aliases=["resetplayingrecord"], description="Reset the record active time",
+    help="Resets active record time.", brief="Reset active record")
+    async def resetplayingrecord(self, ctx):
+        """Reset all the active times
+        """
+
+        if await check_auth(ctx, self.bot):
+            guild = await checkGuild(ctx.guild, db=self.db)
+            guild.record_active_time = 0
+            self.db.commit()
+            await ctx.channel.send("```yaml\nActive record has been reset\n```")
 
     @commands.command(name='lobbychannel', aliases=["waitchannel", "queuechannel"], description="Set the channel to monitor for waiting users",
     help="Change the channel to monitor for waiting users", brief="Change wait channel")
