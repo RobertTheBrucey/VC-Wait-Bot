@@ -1,11 +1,10 @@
 # VC-Wait-Bot
 
 ## To Do:
-* Get front of the queue
-* Have bot move front of queue from waitroom to playing
 * Handle the case of lobby channel and active channel being the same
 * Manage role is broken
 * jointime = 0 bug still exists - Might be fixed now
+* Update record holders to include current people in the rooms
 
 ## Done:
 * Log when user joins VC
