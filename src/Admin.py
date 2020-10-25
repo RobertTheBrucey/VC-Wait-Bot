@@ -66,10 +66,11 @@ class Admin(commands.Cog):
         if (await check_auth(ctx, self.bot)):
             guild = await checkGuild(ctx.guild, db=self.db)
             if arg:
-                opts = [c for c in ctx.guild.roles if arg in c.name.lower()]
+                opts = [c for c in ctx.guild.roles if arg.lower() in c.name.lower()]
                 for c in ctx.guild.roles:
-                    if arg == c.name.lower():
+                    if arg.lower() == c.name.lower():
                         opts = [c]
+                        break
                 if len(opts) == 1:
                     guild.management_role = opts[0].id
                     self.db.commit()
