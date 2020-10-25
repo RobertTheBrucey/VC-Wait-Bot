@@ -45,10 +45,10 @@ class Guild(Base):
     lastplay = Column(Integer, default=0)
     record_lobby_time = Column(Integer, default=0)
     record_lobby_user_id = Column(Integer, ForeignKey('users.id'))
-    record_lobby_user = relationship("User", uselist=False, foreign_keys=[record_lobby_user_id], primaryjoin="User.id==Guild.record_lobby_user_id")
+    record_lobby_user = relationship("User", uselist=False, primaryjoin="Guild.record_lobby_user_id==User.id", post_update=True)
     record_active_time = Column(Integer, default=0)
     record_active_user_id = Column(Integer, ForeignKey('users.id'))
-    record_active_user = relationship("User", uselist=False, foreign_keys=[record_active_user_id], primaryjoin="User.id==Guild.record_active_user_id")
+    record_active_user = relationship("User", uselist=False, primaryjoin="Guild.record_active_user_id==User.id", post_update=True)
     users = relationship("User", back_populates="guild", primaryjoin="User.guild_id==Guild.id")
     
 
@@ -90,13 +90,12 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     guild_id = Column(Integer, ForeignKey('guilds.id'))
-    guild = relationship("Guild", back_populates="users", primaryjoin="User.guild_id==Guild.id", post_update=True)
+    guild = relationship("Guild", back_populates="users", primaryjoin="User.guild_id==Guild.id")
     jointime = Column(Integer, default=0, nullable=False)
     leavetime = Column(Integer, default=0, nullable=False)
     jointime_playing = Column(Integer, default=0, nullable=False)
     leavetime_playing = Column(Integer, default=0, nullable=False)
     waiting = Column(Enum(Status), default=Status.none)
-#Guild.users = relationship("User", order_by=User.jointime, back_populates="guild")
 
 class RoleType(enum.Enum):
     """

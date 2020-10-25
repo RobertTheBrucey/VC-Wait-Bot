@@ -6,7 +6,6 @@
 * Handle the case of lobby channel and active channel being the same
 * Manage role is broken
 * jointime = 0 bug still exists - Might be fixed now
-* Cause of all users being removed from lobby/active channels may still exist, may be linked to record time tracking
 
 ## Done:
 * Log when user joins VC
