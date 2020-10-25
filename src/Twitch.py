@@ -41,17 +41,17 @@ class Twitch(commands.Cog):
             if chan is None: #Best case, Twitch channel not linked
                 chan = TwitchChannel(name=name, guild=guild)
                 if await self.t_bot.add_channel(chan):
-                    await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse {self.t_bot.prefix}verifyqueue in Twitch chat to complete the connection\n```")
+                    await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse {self.t_bot.prefix}verifyqueue in Twitch chat to complete the connection\n```", delete_after=del_time)
                 else:
-                    await ctx.send(f"```yaml\nCould not find Twitch channel {name}\n```")
+                    await ctx.send(f"```yaml\nCould not find Twitch channel {name}\n```", delete_after=del_time)
             elif chan.verified: #Someone has already linked this Twitch channel
-                await ctx.send(f"```yaml\nTwitch channel {name} has already been linked, use {self.t_bot.prefix}leavequeue in Twitch chat to remove existing connection\n```")
+                await ctx.send(f"```yaml\nTwitch channel {name} has already been linked, use {self.t_bot.prefix}leavequeue in Twitch chat to remove existing connection\n```", delete_after=del_time)
             else: #Twitch linked but not verified, reset the linking process
                 chan.guild=guild
                 if await self.t_bot.add_channel(chan):
-                    await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse {self.t_bot.prefix}verifyqueue in Twitch chat to complete the connection\n```")
+                    await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse {self.t_bot.prefix}verifyqueue in Twitch chat to complete the connection\n```", delete_after=del_time)
                 else:
-                    await ctx.send(f"```yaml\nCould not find Twitch channel {name}\n```")
+                    await ctx.send(f"```yaml\nCould not find Twitch channel {name}\n```", delete_after=del_time)
             self.db.commit()
 
     @commands.command(name='removetwitch', description="Remove a connected Twitch channel",
@@ -64,14 +64,14 @@ class Twitch(commands.Cog):
                 name = name[1:]
             chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==name).one_or_none()
             if chan is None:
-                await ctx.send(f"```yaml\nCould not find Twitch channel {name}\n```")
+                await ctx.send(f"```yaml\nCould not find Twitch channel {name}\n```", delete_after=del_time)
             else:
                 if chan.guild == guild:
                     await self.t_bot.del_channel(chan)
                     self.db.delete(chan)
-                    await ctx.channel.send(f"```yaml\nTwitch channel {name} has been removed\n```")
+                    await ctx.channel.send(f"```yaml\nTwitch channel {name} has been removed\n```", delete_after=del_time)
                 else:
-                    await ctx.channel.send(f"```yaml\nTwitch channel {name} is not linked to this server. Naughty!\n```")
+                    await ctx.channel.send(f"```yaml\nTwitch channel {name} is not linked to this server. Naughty!\n```", delete_after=del_time)
             self.db.commit()
     
     @commands.command(name='showtwitch', description="Show connected Twitch channels",
@@ -89,6 +89,6 @@ class Twitch(commands.Cog):
                 if verimsg:
                     string += f"A mod must use {self.t_bot.prefix}verifyqueue in twitch chat to verify channels\n"
                 string += "```"
-                await ctx.channel.send(string)
+                await ctx.channel.send(string, delete_after=del_time)
             else:
-                await ctx.channel.send("```yaml\nNo twitch channels have been linked.\n```")
+                await ctx.channel.send("```yaml\nNo twitch channels have been linked.\n```", delete_after=del_time)

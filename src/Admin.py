@@ -72,7 +72,7 @@ class Admin(commands.Cog):
                         opts = [c]
                 if len(opts) == 1:
                     guild.management_role = opts[0].id
-                    db.commit()
+                    self.db.commit()
                     await ctx.channel.send(f"```yaml\nManagement role set to {c.name} \n```")
                 elif len(opts) == 0:
                     await ctx.channel.send(f"```yaml\nNo roles match {arg}\n```")

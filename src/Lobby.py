@@ -72,7 +72,7 @@ class Lobby(commands.Cog):
                             pass
                 self.db.commit()
             else:
-                await ctx.channel.send(f"```yaml\nCommand on cooldown, please wait {tl} seconds.\n```")
+                await ctx.channel.send(f"```yaml\nCommand on cooldown, please wait {tl} seconds.\n```", delete_after=del_time)
 
     @commands.command(name='active', aliases=["playing"], description="Show the play time of current players.",
     help="Show the play time of current players.", brief="Show the players")
@@ -120,7 +120,7 @@ class Lobby(commands.Cog):
                             pass
                 self.db.commit()
             else:
-                await ctx.channel.send(f"```yaml\nCommand on cooldown, please wait {tl} seconds.\n```")
+                await ctx.channel.send(f"```yaml\nCommand on cooldown, please wait {tl} seconds.\n```", delete_after=del_time)
 
     @commands.command(name='activerecord', aliases=["playingrecord"], description="Show the record longest active time.",
     help="Show the record longest active user.", brief="Show the active record")

@@ -42,7 +42,7 @@ class LobbyAdmin(commands.Cog):
                 u.jointime = ct
                 u.leavetime = 0
             self.db.commit()
-            await ctx.channel.send("```yaml\nAll lobby times have been reset\n```")
+            await ctx.channel.send("```yaml\nAll lobby times have been reset\n```", delete_after=del_time)
     
     @commands.command(name='resetlobbyrecord', aliases=["resetwaitingrecord","resetqueuerecord"], description="Reset the record lobby time",
     help="Resets lobby record time.", brief="Reset lobby record")
@@ -54,7 +54,7 @@ class LobbyAdmin(commands.Cog):
             guild = await checkGuild(ctx.guild, db=self.db)
             guild.record_lobby_time = 0
             self.db.commit()
-            await ctx.channel.send("```yaml\nLobby record time has been reset\n```")
+            await ctx.channel.send("```yaml\nLobby record time has been reset\n```", delete_after=del_time)
 
     @commands.command(name='resetactive', aliases=["resetplaying"], description="Reset the times for all users",
     help="Resets all playing times.", brief="Reset play times")
@@ -69,7 +69,7 @@ class LobbyAdmin(commands.Cog):
                 u.jointime_playing = ct
                 u.leavetime_playing = 0
             self.db.commit()
-            await ctx.channel.send("```yaml\nAll active times have been reset\n```")
+            await ctx.channel.send("```yaml\nAll active times have been reset\n```", delete_after=del_time)
     
     @commands.command(name='resetactiverecord', aliases=["resetplayingrecord"], description="Reset the record active time",
     help="Resets active record time.", brief="Reset active record")
@@ -81,7 +81,7 @@ class LobbyAdmin(commands.Cog):
             guild = await checkGuild(ctx.guild, db=self.db)
             guild.record_active_time = 0
             self.db.commit()
-            await ctx.channel.send("```yaml\nActive record has been reset\n```")
+            await ctx.channel.send("```yaml\nActive record has been reset\n```", delete_after=del_time)
 
     @commands.command(name='lobbychannel', aliases=["waitchannel", "queuechannel"], description="Set the channel to monitor for waiting users",
     help="Change the channel to monitor for waiting users", brief="Change wait channel")
@@ -99,17 +99,17 @@ class LobbyAdmin(commands.Cog):
                 if len(opts) == 1:
                     guild.channel = opts[0].id
                     self.db.commit()
-                    await ctx.channel.send(f"```yaml\nWait channel set to {c.name}\n```")
+                    await ctx.channel.send(f"```yaml\nWait channel set to {c.name}\n```", delete_after=del_time)
                     await self.bot.get_cog("Lobby").update_last(ctx.guild, db=self.db)
                 elif len(opts) == 0:
-                    await ctx.channel.send(f"```yaml\nNo channels match {arg}\n```")
+                    await ctx.channel.send(f"```yaml\nNo channels match {arg}\n```", delete_after=del_time)
                 else:
                     chans = ""
                     for c in opts:
                         chans += c.name + "\n"
-                    await ctx.channel.send(f"```yaml\nToo many matches, please be more specific.\n{chans}```")
+                    await ctx.channel.send(f"```yaml\nToo many matches, please be more specific.\n{chans}```", delete_after=del_time)
             else:
-                await ctx.channel.send(f"```yaml\nCurrent Lobby Channel is {ctx.guild.get_channel(guild.channel).name}\n```")
+                await ctx.channel.send(f"```yaml\nCurrent Lobby Channel is {ctx.guild.get_channel(guild.channel).name}\n```", delete_after=del_time)
 
     @commands.command(name='activechannel', aliases=["playchannel"] ,description="Set the channel to monitor for playing users",
     help="Change the channel to monitor for playing users", brief="Change play channel")
@@ -128,17 +128,17 @@ class LobbyAdmin(commands.Cog):
                 if len(opts) == 1:
                     guild.channel_playing = c.id 
                     self.db.commit()
-                    await ctx.channel.send(f"```yaml\nActive channel set to {c.name}\n```")
+                    await ctx.channel.send(f"```yaml\nActive channel set to {c.name}\n```", delete_after=del_time)
                     await self.bot.get_cog("Lobby").update_play(ctx.guild, db=self.db)
                 elif len(opts) == 0:
-                    await ctx.channel.send(f"```yaml\nNo channels match {arg}\n```")
+                    await ctx.channel.send(f"```yaml\nNo channels match {arg}\n```", delete_after=del_time)
                 else:
                     chans = ""
                     for c in opts:
                         chans += c.name + "\n"
-                    await ctx.channel.send(f"```yaml\nToo many matches, please be more specific.\n{chans}```")
+                    await ctx.channel.send(f"```yaml\nToo many matches, please be more specific.\n{chans}```", delete_after=del_time)
             else:
-                await ctx.channel.send(f"```yaml\nCurrent Active channel is {ctx.guild.get_channel(guild.channel_playing).name}\n```")
+                await ctx.channel.send(f"```yaml\nCurrent Active channel is {ctx.guild.get_channel(guild.channel_playing).name}\n```", delete_after=del_time)
 
     @commands.command(name='grace', description="Set the grace period in the case of temporary disconnections",
     help="Set the grace period for disconnections", brief="Change DC grace period")
@@ -152,8 +152,8 @@ class LobbyAdmin(commands.Cog):
                 if arg.isdigit():
                     guild.grace = int(arg)
                     self.db.commit()
-                    await ctx.channel.send(f"```yaml\nGrace period changed to {arg} minutes\n```")
+                    await ctx.channel.send(f"```yaml\nGrace period changed to {arg} minutes\n```", delete_after=del_time)
                 else:
-                    await ctx.channel.send("```yaml\nError: Expected an integer for grace period\n```")
+                    await ctx.channel.send("```yaml\nError: Expected an integer for grace period\n```", delete_after=del_time)
             else:
-                await ctx.channel.send(f"```yaml\nCurrent Grace Period is {guild.grace} minutes\n```")
+                await ctx.channel.send(f"```yaml\nCurrent Grace Period is {guild.grace} minutes\n```", delete_after=del_time)
