@@ -3,4 +3,3 @@ discord
 SQLAlchemy
 twitchio
 typing_extensions
-cProfile
