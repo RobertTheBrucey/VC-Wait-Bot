@@ -177,18 +177,19 @@ class Lobby(commands.Cog):
         chan = member.guild.get_channel(chanid)
         p_chan = member.guild.get_channel(guild.channel_playing)
         update = False
+        update_p = False
         if after.channel == chan and before.channel != chan: #Moved into waiting
-            if user.guild != guild or ((int(time.time()) - user.leavetime) > (guild.grace * 60)): #grace period handling
+            if (user.guild != guild) or ((int(time.time()) - user.leavetime) > (guild.grace * 60)): #grace period handling
                 user.jointime = int(time.time()) #grace period handling
             user.guild = guild
             user.waiting = Status.waiting
             update = True
         elif after.channel == p_chan and before.channel != p_chan: #Moved into playing
-            if user.guild != guild or ((int(time.time()) - user.leavetime_playing) > (guild.grace * 60)): #grace period handling
+            if (user.guild != guild) or ((int(time.time()) - user.leavetime_playing) > (guild.grace * 60)): #grace period handling
                 user.jointime_playing = int(time.time()) #grace period handling
             user.guild = guild
             user.waiting = Status.playing
-            update = True
+            update_p = True
         if before.channel == chan and after.channel != chan: #Left waiting
             user.leavetime = int(time.time())
             if user.jointime == 0:
@@ -212,10 +213,11 @@ class Lobby(commands.Cog):
             if after.channel != chan:
                     user.waiting = Status.none
             user.guild = guild
-            update = True
+            update_p = True
         self.db.commit()
         if update:
             await self.update_last(member.guild, db=self.db)
+        if update_p:
             await self.update_play(member.guild, db=self.db)
 
     async def update_last(self, guild_d, db):
@@ -318,7 +320,10 @@ class Lobby(commands.Cog):
         for user in guild_db.users: #Remove users not in VC
             u = user.id
             if u not in {**members, **members_p}:
-                user.leavetime = int(time.time())
+                if user.waiting == Status.waiting:
+                    user.leavetime = int(time.time())
+                else:
+                    user.leavetime_playing = int(time.time())
                 user.guild = guild_db
                 user.waiting = Status.none
         for user in members: #Add users in waiting
