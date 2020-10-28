@@ -312,8 +312,8 @@ class Lobby(commands.Cog):
         """
         
         guild_db = await checkGuild(guild, db=self.db)
-        members = guild.get_channel(guild_db.channel).voice_states if guild.get_channel(guild_db.channel) else None #Wait channel
-        members_p = guild.get_channel(guild_db.channel_playing).voice_states if guild.get_channel(guild_db.channel_playing) else None #Play channel
+        members = guild.get_channel(guild_db.channel).voice_states if guild.get_channel(guild_db.channel) else {} #Wait channel
+        members_p = guild.get_channel(guild_db.channel_playing).voice_states if guild.get_channel(guild_db.channel_playing) else {} #Play channel
         
         for user in guild_db.users: #Remove users not in VC
             u = user.id
