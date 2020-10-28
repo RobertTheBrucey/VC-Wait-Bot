@@ -5,6 +5,8 @@
 * Manage role is broken
 * jointime = 0 bug still exists - Might be fixed now
 * Update record holders to include current people in the rooms
+* Allow AFK channel to not reset times
+* Profile and optimise code
 
 ## Done:
 * Log when user joins VC
