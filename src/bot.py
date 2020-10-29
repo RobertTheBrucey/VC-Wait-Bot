@@ -41,6 +41,11 @@ try:
         bot.add_cog(LobbyAdmin(bot))
         bot.add_cog(Lobby(bot))
         bot.add_cog(Twitch(bot))
+        try:
+            from RoleSync import RoleSync
+            bot.add_cog(RoleSync(bot))
+        except:
+            pass
 
         try:
             bot.run(getToken())
