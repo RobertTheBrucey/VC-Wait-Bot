@@ -50,8 +50,9 @@ class T_Bot(commands.Bot):
             tl = (chan.lastcall + 2) - int(time.time())
             if tl < 0:
                 users = [u for u in chan.guild.users if u.waiting == Status.waiting]
+                maxtime = datetime.timedelta(seconds=int(time.time()) - min(u.jointime for u in users))
                 count = len(users)
-                await ctx.send(f'There are {count} players waiting to play!')
+                await ctx.send(f'There are {count} players waiting to play! Current wait time is {maxtime}.')
                 chan.lastcall = int(time.time())
     
     async def add_channel(self, chan):
