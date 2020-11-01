@@ -172,6 +172,7 @@ class Lobby(commands.Cog):
                     guild.record_lobby_time = int(time.time()) - u.jointime
                     guild.record_lobby_user = u
             self.db.commit()
+            print(guild.record_lobby_user)
             nick = ctx.guild.get_member(guild.record_lobby_user.id).display_name
             t = datetime.timedelta(seconds=guild.record_lobby_time)
             msg = f"```yaml\nThe current lobby time record holder is {nick} with a time of {t}\n```"
