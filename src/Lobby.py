@@ -165,7 +165,7 @@ class Lobby(commands.Cog):
         if guild.record_lobby_time:
             chan = ctx.guild.get_channel(guild.channel)
             if ctx.guild.get_member(guild.record_lobby_user.id) is None:
-                guild.record_active_time = 0
+                guild.record_lobby_time = 0
             for user in chan.voice_states:
                 u = await get_user(user, db=self.db)
                 if int(time.time()) - u.jointime > guild.record_lobby_time:
