@@ -7,7 +7,7 @@ build:
 	docker image prune -f
 
 run:
-	docker run -itd --mount type=bind,source="$(shell pwd)/src/db",target=/src/db --name $(APP) $(APP)
+	docker run -itd --restart unless-stopped --mount type=bind,source="$(shell pwd)/src/db",target=/src/db --name $(APP) $(APP)
 
 stop:
 	docker stop $(APP)

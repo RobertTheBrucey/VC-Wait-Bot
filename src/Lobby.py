@@ -133,6 +133,15 @@ class Lobby(commands.Cog):
         auth = await check_auth(ctx, self.bot)
         guild = await checkGuild(ctx.guild, db=self.db)
         if guild.record_active_time:
+            chan = ctx.guild.get_channel(guild.channel_playing)
+            if not ctx.guild.get_member(guild.record_active_user_id):
+                guild.record_active_time = 0
+            for user in chan.voice_states:
+                u = await get_user(user, db=self.db)
+                if int(time.time()) - u.jointime > guild.record_active_time:
+                    guild.record_active_time = int(time.time()) - u.jointime_playing
+                    guild.record_active_user = u
+            self.db.commit()
             nick = ctx.guild.get_member(guild.record_active_user_id).display_name
             t = datetime.timedelta(seconds=guild.record_active_time)
             msg = f"```yaml\nThe current active time record holder is {nick} with a time of {t}\n```"
@@ -154,6 +163,15 @@ class Lobby(commands.Cog):
         auth = await check_auth(ctx, self.bot)
         guild = await checkGuild(ctx.guild, db=self.db)
         if guild.record_lobby_time:
+            chan = ctx.guild.get_channel(guild.channel)
+            if not ctx.guild.get_member(guild.record_lobby_user_id):
+                guild.record_active_time = 0
+            for user in chan.voice_states:
+                u = await get_user(user, db=self.db)
+                if int(time.time()) - u.jointime > guild.record_lobby_time:
+                    guild.record_lobby_time = int(time.time()) - u.jointime
+                    guild.record_lobby_user = u
+            self.db.commit()
             nick = ctx.guild.get_member(guild.record_lobby_user_id).display_name
             t = datetime.timedelta(seconds=guild.record_lobby_time)
             msg = f"```yaml\nThe current lobby time record holder is {nick} with a time of {t}\n```"
@@ -198,6 +216,9 @@ class Lobby(commands.Cog):
             if dur > guild.record_lobby_time:
                 guild.record_lobby_time = dur
                 guild.record_lobby_user = user
+            elif not member.guild.get_member(guild.record_lobby_user_id):
+                guild.record_lobby_time = dur
+                guild.record_lobby_user = user
             if after.channel != p_chan:
                     user.waiting = Status.none
             user.guild = guild
@@ -208,6 +229,9 @@ class Lobby(commands.Cog):
                 user.jointime_playing = user.leavetime_playing
             dur = user.leavetime_playing - user.jointime_playing
             if dur > guild.record_active_time:
+                guild.record_active_time = dur
+                guild.record_active_user = user
+            elif not member.guild.get_member(guild.record_active_user_id):
                 guild.record_active_time = dur
                 guild.record_active_user = user
             if after.channel != chan:
