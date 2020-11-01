@@ -171,6 +171,7 @@ class Lobby(commands.Cog):
                 if int(time.time()) - u.jointime > guild.record_lobby_time:
                     guild.record_lobby_time = int(time.time()) - u.jointime
                     guild.record_lobby_user = u
+                    guild.record_lobby_user_id = u.id
             self.db.commit()
             nick = ctx.guild.get_member(guild.record_lobby_user_id).display_name
             t = datetime.timedelta(seconds=guild.record_lobby_time)
