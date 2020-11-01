@@ -164,16 +164,15 @@ class Lobby(commands.Cog):
         guild = await checkGuild(ctx.guild, db=self.db)
         if guild.record_lobby_time:
             chan = ctx.guild.get_channel(guild.channel)
-            if ctx.guild.get_member(guild.record_lobby_user_id) is None:
+            if ctx.guild.get_member(guild.record_lobby_user.id) is None:
                 guild.record_active_time = 0
             for user in chan.voice_states:
                 u = await get_user(user, db=self.db)
                 if int(time.time()) - u.jointime > guild.record_lobby_time:
                     guild.record_lobby_time = int(time.time()) - u.jointime
                     guild.record_lobby_user = u
-                    guild.record_lobby_user_id = u.id
             self.db.commit()
-            nick = ctx.guild.get_member(guild.record_lobby_user_id).display_name
+            nick = ctx.guild.get_member(guild.record_lobby_user.id).display_name
             t = datetime.timedelta(seconds=guild.record_lobby_time)
             msg = f"```yaml\nThe current lobby time record holder is {nick} with a time of {t}\n```"
             if auth or not guild.privcomms:
