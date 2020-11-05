@@ -40,7 +40,7 @@ class T_Bot(commands.Bot):
         if not ctx.author.name.lower() == parser["twitch"]["nick"]:
             try:
                 await self.handle_commands(ctx)
-            except:
+            except commands.errors.CommandNotFound:
                 pass
 
     @commands.command(name="queue")
