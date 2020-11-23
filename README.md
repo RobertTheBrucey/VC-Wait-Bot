@@ -1,7 +1,11 @@
 # VC-Wait-Bot
 
 ## To Do:
-* Investigate issue where Northie Sub joins oohRemix before Northie discord and doesn't get roles
+* Add a record command for default record type or both records
+* Investigate issue where Northie Sub joins Northie discord then oohRemix discord and doesn't get roles
+* File "/src/Lobby.py", line 322, in update_play
+    nick = msg.guild.get_member(u.id).display_name #Duplicate displaynames are not handled
+    AttributeError: 'NoneType' object has no attribute 'display_name'
 * Store records per person instead of per guild in case a record holder leaves the guild
 * Implement DB migrations
     * Optimise by using a pre-container to migrate instead of the main container
