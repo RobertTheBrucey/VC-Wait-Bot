@@ -2,3 +2,4 @@ config.ini
 db/*
 __pycache__/
 RoleSync.py
+VoiceRole.py

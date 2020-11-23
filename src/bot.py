@@ -45,6 +45,11 @@ if __name__ == "__main__":
         bot.add_cog(RoleSync(bot))
     except:
         pass
+    try:
+        from VoiceRole import VoiceRole
+        bot.add_cog(VoiceRole(bot))
+    except:
+        pass
 
     try:
         bot.run(getToken())
