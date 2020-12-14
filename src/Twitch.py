@@ -37,9 +37,11 @@ class Twitch(commands.Cog):
             name = ctx.message.content.split(" ")[1]
             if name[0] == "#":
                 name = name[1:]
+            elif "/" in name:
+                name = name.split("/")[-1]
             chan = self.db.query(TwitchChannel).filter(TwitchChannel.name==name).one_or_none()
             if chan is None: #Best case, Twitch channel not linked
-                chan = TwitchChannel(name=name, guild=guild)
+                chan = TwitchChannel(name=name.lower(), guild=guild)
                 if await self.t_bot.add_channel(chan):
                     await ctx.send(f"```yaml\nTwitch channel {name} has been added.\nUse {self.t_bot.prefix}verifyqueue in Twitch chat to complete the connection\n```", delete_after=del_time)
                 else:
