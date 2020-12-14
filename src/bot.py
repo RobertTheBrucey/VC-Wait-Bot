@@ -53,5 +53,6 @@ if __name__ == "__main__":
 
     try:
         bot.run(getToken())
+        bot.close()
     except discord.LoginFailure:
         print("Login error.")
