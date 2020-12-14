@@ -83,15 +83,18 @@ async def check_auth(ctx, bot):
     bot : commands.Bot
         Bot object to use to check for permissions
     """
-    owner = (await bot.application_info()).owner
     try:
-        manrole = ctx.guild.get_role((await checkGuild(ctx.guild)).management_role)
+        owner = (await bot.application_info()).owner
+        try:
+            manrole = ctx.guild.get_role((await checkGuild(ctx.guild)).management_role)
+        except:
+            manrole = None
+        allowed = ctx.message.author == owner or \
+        ctx.message.author.guild_permissions.administrator or \
+        (not manrole is None and manrole in ctx.message.author.roles)
+        return allowed
     except:
-        manrole = None
-    allowed = ctx.message.author == owner or \
-    ctx.message.author.guild_permissions.administrator or \
-    (not manrole is None and manrole in ctx.message.author.roles)
-    return allowed
+        return False
 
 async def delete_own(guild_d, msg_id, db) -> None:
     """Delete last sent lobby message

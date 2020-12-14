@@ -13,6 +13,7 @@
 * Allow AFK channel to not reset times
 * Profile and optimise code
 * Keep track of active time over a longer period (1 week or so) to help with regulars vs new players
+* Cache owner in case of discord partial outage
 
 ## Done:
 * Log when user joins VC
