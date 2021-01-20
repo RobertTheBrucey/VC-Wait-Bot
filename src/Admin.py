@@ -27,7 +27,7 @@ class Admin(commands.Cog):
         self._last_member = None
         self.db = bot.db
 
-    @commands.command(name='getme', description="Sends the bot invite link",
+    @commands.command(name='invite', description="Sends the bot invite link",
     help="Sends you an invite link for this bot", brief="Add this bot to your server!")
     async def getme(self, ctx):
         await ctx.author.send("```yaml\nClick this to add me to your server!\n```\nhttps://discord.com/api/oauth2/authorize?client_id=765426185638903808&permissions=11264&scope=bot")
