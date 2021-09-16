@@ -24,7 +24,7 @@ class T_Bot(commands.Bot):
         chans += parser["twitch"]["initial_channels"].split(",")
         print(chans)
         super().__init__(
-            irc_token=parser["twitch"]["irc_token"],
+            token=parser["twitch"]["irc_token"],
             client_id=parser["twitch"]["client_id"],
             nick=parser["twitch"]["nick"],
             prefix=parser["twitch"]["prefix"],
