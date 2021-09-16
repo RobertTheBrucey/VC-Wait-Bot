@@ -26,7 +26,8 @@ async def on_ready():
     for g in bot.guilds:
         print(g)
     if bot.get_cog("Twitch"):
-        await bot.get_cog("Twitch").t_bot.start()
+        #await bot.get_cog("Twitch").t_bot.start()
+        pass
 
 if __name__ == "__main__":
     #Start DataBase engine
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     bot.add_cog(LobbyAdmin(bot))
     bot.add_cog(Lobby(bot))
     #Crashes program:
-    #bot.add_cog(Twitch(bot))
+    bot.add_cog(Twitch(bot))
     try:
         from RoleSync import RoleSync
         bot.add_cog(RoleSync(bot))
