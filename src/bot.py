@@ -43,7 +43,7 @@ if __name__ == "__main__":
     bot.add_cog(Twitch(bot))
     try:
         from RoleSync import RoleSync
-        bot.add_cog(RoleSync(bot))
+        #bot.add_cog(RoleSync(bot))
     except:
         pass
     try:
