@@ -39,7 +39,7 @@ if __name__ == "__main__":
     #Load all Cogs for this bot
     bot.add_cog(Admin(bot))
     bot.add_cog(LobbyAdmin(bot))
-    bot.add_cog(Lobby(bot))
+    #bot.add_cog(Lobby(bot))
     bot.add_cog(Twitch(bot))
     try:
         from RoleSync import RoleSync
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         pass
     try:
         from VoiceRole import VoiceRole
-        bot.add_cog(VoiceRole(bot))
+        #bot.add_cog(VoiceRole(bot))
     except:
         pass
 
