@@ -48,7 +48,7 @@ if __name__ == "__main__":
         pass
     try:
         from VoiceRole import VoiceRole
-        #bot.add_cog(VoiceRole(bot))
+        bot.add_cog(VoiceRole(bot))
     except:
         pass
 
