@@ -36,18 +36,18 @@ if __name__ == "__main__":
     bot.db = db
 
     #Load all Cogs for this bot
-    bot.add_cog(Admin(bot))
-    bot.add_cog(LobbyAdmin(bot))
+    #bot.add_cog(Admin(bot))
+    #bot.add_cog(LobbyAdmin(bot))
     #bot.add_cog(Lobby(bot))
-    bot.add_cog(Twitch(bot))
+    #bot.add_cog(Twitch(bot))
     try:
         from RoleSync import RoleSync
-        bot.add_cog(RoleSync(bot))
+        #bot.add_cog(RoleSync(bot))
     except:
         pass
     try:
         from VoiceRole import VoiceRole
-        bot.add_cog(VoiceRole(bot))
+        #bot.add_cog(VoiceRole(bot))
     except:
         pass
 
