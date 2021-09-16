@@ -25,7 +25,8 @@ async def on_ready():
     print(f"Currently in {len(bot.guilds)} guilds")
     for g in bot.guilds:
         print(g)
-    await bot.get_cog("Twitch").t_bot.start()
+    if bot.get_cog("Twitch"):
+        await bot.get_cog("Twitch").t_bot.start()
 
 if __name__ == "__main__":
     #Start DataBase engine
@@ -36,7 +37,7 @@ if __name__ == "__main__":
     bot.db = db
 
     #Load all Cogs for this bot
-    #bot.add_cog(Admin(bot))
+    bot.add_cog(Admin(bot))
     #bot.add_cog(LobbyAdmin(bot))
     #bot.add_cog(Lobby(bot))
     #bot.add_cog(Twitch(bot))
