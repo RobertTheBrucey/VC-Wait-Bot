@@ -38,12 +38,12 @@ if __name__ == "__main__":
 
     #Load all Cogs for this bot
     bot.add_cog(Admin(bot))
-    #bot.add_cog(LobbyAdmin(bot))
-    #bot.add_cog(Lobby(bot))
-    #bot.add_cog(Twitch(bot))
+    bot.add_cog(LobbyAdmin(bot))
+    bot.add_cog(Lobby(bot))
+    bot.add_cog(Twitch(bot))
     try:
         from RoleSync import RoleSync
-        #bot.add_cog(RoleSync(bot))
+        bot.add_cog(RoleSync(bot))
     except:
         pass
     try:
